@@ -1,0 +1,35 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "smartgridv2",
+          "appId": "1:191135381788:android:a21214ec5e14eb973b62d9",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "smartgridv2",
+          "configurations": {
+            "android": "1:191135381788:android:a21214ec5e14eb973b62d9",
+            "ios": "1:191135381788:ios:2388256cfd3dd9e83b62d9"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ]
+}

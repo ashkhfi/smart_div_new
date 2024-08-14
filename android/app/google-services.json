@@ -1,0 +1,135 @@
+{
+  "project_info": {
+    "project_number": "191135381788",
+    "firebase_url": "https://smartgridv2-default-rtdb.firebaseio.com",
+    "project_id": "smartgridv2",
+    "storage_bucket": "smartgridv2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191135381788:android:4087cca98f60c6393b62d9",
+        "android_client_info": {
+          "package_name": "com.elektro.smartgridv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191135381788-eidi2j0khe7i3u4oj7sjb347u6l0iiv6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.elektro.smartgridv2",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "191135381788-dcgq7aqe0qo00dprp2jbaffkls3h4vdj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9oVo78PjaV-6zNdcj_yPJu-s_xZnCkbE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191135381788-dcgq7aqe0qo00dprp2jbaffkls3h4vdj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "191135381788-580rfa2nu2v6i8bsj3anlt5pofg941oj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartDivNew"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191135381788:android:a21214ec5e14eb973b62d9",
+        "android_client_info": {
+          "package_name": "com.example.smart_div_new"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191135381788-0spe7cmau81nbrm6kcqb24588qn7ukn1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smart_div_new",
+            "certificate_hash": "8dff29d3bc8dbdc772fea6f6143b98ddc5f621d5"
+          }
+        },
+        {
+          "client_id": "191135381788-dcgq7aqe0qo00dprp2jbaffkls3h4vdj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9oVo78PjaV-6zNdcj_yPJu-s_xZnCkbE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191135381788-dcgq7aqe0qo00dprp2jbaffkls3h4vdj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "191135381788-580rfa2nu2v6i8bsj3anlt5pofg941oj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartDivNew"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191135381788:android:ff04a517ad1373143b62d9",
+        "android_client_info": {
+          "package_name": "com.example.smartgrid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "191135381788-dcgq7aqe0qo00dprp2jbaffkls3h4vdj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9oVo78PjaV-6zNdcj_yPJu-s_xZnCkbE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "191135381788-dcgq7aqe0qo00dprp2jbaffkls3h4vdj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "191135381788-580rfa2nu2v6i8bsj3anlt5pofg941oj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartDivNew"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

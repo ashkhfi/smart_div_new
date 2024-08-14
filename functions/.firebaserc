@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "staging": "smartgridv2",
+    "default": "smartgridv2"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
