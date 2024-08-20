@@ -3,9 +3,9 @@ import 'package:http/http.dart' as http;
 
 import '../Models/wheater_model.dart';
 
-
 class WeatherService {
-String apiUrl = '';
+  String apiUrl =
+      'http://api.openweathermap.org/data/2.5/weather?q=Semarang,id&APPID=c132a8faae5a9ec38529b91df9ee0815&units=metric';
 
   Future<WeatherDataModel?> fetchWeatherData() async {
     try {

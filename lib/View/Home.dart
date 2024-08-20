@@ -4,6 +4,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_div_new/Provider/sensor_provider.dart';
 import 'package:smart_div_new/Provider/user_provider.dart';
+import 'package:smart_div_new/View/Cuaca.dart';
+import 'package:smart_div_new/View/PenggunaanDaya.dart';
 
 import '../Partials/Card/CardMode.dart';
 import '../Partials/Card/DashboardCard.dart';
@@ -102,15 +104,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
             SizedBox(
               height: 20.h,
             ),
-            /** 
-             * 
-             *card untuk menampilkan mode di home , 
-             note: onRefresh if refreshed icon tapped
-             */
-            CardMode(context, mode: sensorProvider.sensor?.modeAktif ?? "__",
-                onRefresh: () async {
-              await sensorProvider.fetchData();
-            }),
+            CardMode(
+              mode: sensorProvider.sensor?.modeAktif ?? "__",
+              onRefresh: () async {
+                await sensorProvider.fetchData();
+              },
+            ),
             SizedBox(
               height: 30.h,
             ),
@@ -142,8 +141,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         child: DashboardCard(context,
                             label: "Penggunaan Daya Listrik",
                             icon: Icons.electric_bolt,
-                            color: Colors.amber,
-                            onTap: () {}),
+                            color: Colors.amber, onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const Penggunaandaya()));
+                        }),
                       ),
                       Padding(
                         padding: EdgeInsets.all(5.dm),
@@ -163,8 +167,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         child: DashboardCard(context,
                             label: "Perkiraan Cuaca",
                             icon: LucideIcons.cloudSunRain,
-                            color: Colors.blue,
-                            onTap: () {}),
+                            color: Colors.blue, onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Cuaca()),
+                          );
+                        }),
                       ),
                     ],
                   ),
@@ -187,6 +195,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
             ),
           ],
         ),
+        // SizedBox(
+        //   height: 10,
+        // ),
         DraggableScrollableSheet(
             minChildSize: 0.4,
             initialChildSize: 0.4,
@@ -223,20 +234,22 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     Flexible(
                       child: TabBarView(
                         controller: _tabController,
-                        children: [
+                        children: const [
                           SingleChildScrollView(
-                            controller: scrollController,
+                            physics: BouncingScrollPhysics(),
+                            // controller: scrollController,
                             /**
                              * edit menampilkan data pada file ListEnergy.dart
                              */
-                            child: const ListEnergy(),
+                            child: ListEnergy(),
                           ),
                           /**
                              * edit menampilkan data pada file ListPLN.dart
                              */
                           SingleChildScrollView(
-                            controller: scrollController,
-                            child: const ListPLN(),
+                            // controller: scrollController,
+                            physics: BouncingScrollPhysics(),
+                            child: ListPLN(),
                           ),
                         ],
                       ),

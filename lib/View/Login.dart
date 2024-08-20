@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_div_new/Provider/fcm_provider.dart';
 import 'package:smart_div_new/View/Home.dart';
 
 import '../Partials/Button/BaseButton.dart';
@@ -9,6 +10,8 @@ import '../Partials/Button/GoogleButton.dart';
 import '../Partials/Form/formPassword.dart';
 import '../Partials/Form/formText.dart';
 import '../Provider/auth_provider.dart';
+import '../Provider/user_provider.dart';
+import 'LupaPass.dart';
 import 'Register.dart';
 
 class Login extends StatefulWidget {
@@ -58,6 +61,10 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final notifPovider =
+        Provider.of<NotificationProvider>(context, listen: false);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -139,7 +146,10 @@ class _LoginState extends State<Login> {
               Navigator.of(context).pop(); // Tutup dialog loading
 
               if (success) {
-                _showSuccessMessage(context, "Login berhasil!"); // Tampilkan pesan berhasil
+                _showSuccessMessage(
+                    context, "Login berhasil!"); // Tampilkan pesan berhasil
+                await userProvider.loadUserData(authProvider.user!.uid);
+                
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const Home()),
@@ -188,37 +198,40 @@ class _LoginState extends State<Login> {
             SizedBox(
               height: 20.h,
             ),
-          GoogleButton(context,
-                    height: 40.h,
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    color: Colors.white,
-                    fontColor: const Color.fromRGBO(0, 73, 124, 1),
-                    label: "Google Authentication",
-                    borderRadius: 10.dm, onTap: () async {
-                    _showLoadingDialog(context); // Tampilkan dialog loading
+            GoogleButton(context,
+                height: 40.h,
+                width: MediaQuery.of(context).size.width * 0.9,
+                color: Colors.white,
+                fontColor: const Color.fromRGBO(0, 73, 124, 1),
+                label: "Google Authentication",
+                borderRadius: 10.dm, onTap: () async {
+              _showLoadingDialog(context); // Tampilkan dialog loading
 
-                    await authProvider.signInWithGoogle();
-                    Navigator.of(context).pop(); // Tutup dialog loading
+              await authProvider.signInWithGoogle();
+              Navigator.of(context).pop(); // Tutup dialog loading
 
-                    if (authProvider.user != null) {
-                      _showSuccessMessage(context, "Login Google berhasil!"); // Tampilkan pesan berhasil
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const Home()),
-                      );
-                    } else if (authProvider.errorMessage != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            authProvider.errorMessage!.toString(),
-                          ),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }else{
-                      print("Eror bang");
-                    }
-                  }),
+              if (authProvider.user != null) {
+                await userProvider.loadUserData(authProvider.user!.uid);
+                
+                _showSuccessMessage(context,
+                    "Login Google berhasil!"); // Tampilkan pesan berhasil
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Home()),
+                );
+              } else if (authProvider.errorMessage != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      authProvider.errorMessage!.toString(),
+                    ),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              } else {
+                print("Eror bang");
+              }
+            }),
             SizedBox(
               height: 15.h,
             ),
@@ -235,8 +248,10 @@ class _LoginState extends State<Login> {
                 ),
                 InkWell(
                   onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => const Register()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Register()));
                   },
                   child: Text(
                     "Daftar",
@@ -255,12 +270,11 @@ class _LoginState extends State<Login> {
             ),
             TextButton(
                 onPressed: () async {
-                  if (_emailController.text.isNotEmpty) {
-                    await authProvider.resetPassword(_emailController.text);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Password reset link sent!')),
-                    );
-                  }
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LupaPass()));
+              
                 },
                 child: Text(
                   "Lupa password?",

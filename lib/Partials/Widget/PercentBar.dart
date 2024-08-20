@@ -6,11 +6,12 @@ Widget PercentBar(BuildContext context, {
   required double percent, 
   required String money
 }) {
+  double normalizedPercent = percent / 100.0;
   return CircularPercentIndicator(
     radius: 90.dm,
     curve: Curves.easeIn,
     circularStrokeCap: CircularStrokeCap.round,
-    percent: percent,
+    percent: normalizedPercent,
     lineWidth: 20.dm,
     linearGradient: const LinearGradient(colors: [
       Color.fromRGBO(77, 178, 250, 1),
@@ -21,7 +22,7 @@ Widget PercentBar(BuildContext context, {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "${percent*100}%",
+            "${normalizedPercent*100}%",
             style: TextStyle(
                 color: const Color.fromRGBO(0, 73, 124, 1),
                 fontFamily: "Lato",
@@ -29,7 +30,7 @@ Widget PercentBar(BuildContext context, {
                 fontSize: 28.sp),
           ),
           Text(
-            "Rp $money",
+            money,
             style: TextStyle(
                 color: const Color.fromRGBO(0, 73, 124, 1),
                 fontFamily: "Lato",

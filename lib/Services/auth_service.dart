@@ -8,7 +8,6 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-
   // Method untuk sign in dengan email dan password
   Future<UserModel?> signInWithEmailAndPassword(
       String email, String password) async {
@@ -16,7 +15,8 @@ class AuthService {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      return UserModel(uid: user!.uid, email: user.email!,name: user.displayName);
+      return UserModel(
+          uid: user!.uid, email: user.email!, name: user.displayName);
     } on FirebaseAuthException catch (e) {
       // Menangani berbagai jenis kesalahan Firebase Auth
       if (e.code == 'user-not-found') {
@@ -33,6 +33,10 @@ class AuthService {
     }
   }
 
+  User? getCurrentUser() {
+    return _auth.currentUser;
+  }
+
   // Method untuk sign up dengan email dan password
   Future<UserModel?> signUpWithEmailAndPassword(
       String email, String password) async {
@@ -40,7 +44,8 @@ class AuthService {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User? user = result.user;
-      return UserModel(uid: user!.uid, email: user.email!, name: user.displayName);
+      return UserModel(
+          uid: user!.uid, email: user.email!, name: user.displayName);
     } on FirebaseAuthException catch (e) {
       // Menangani berbagai jenis kesalahan Firebase Auth
       print('Kesalahan: ${e.message}');
@@ -64,6 +69,7 @@ class AuthService {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
+      print("Berhasil keluar");
     } catch (e) {
       print('Kesalahan saat sign out: ${e.toString()}');
     }
@@ -85,7 +91,8 @@ class AuthService {
           print("hasil : $result");
         }
         User? user = result.user;
-        return UserModel(uid: user!.uid, email: user.email!, name: user.displayName);
+        return UserModel(
+            uid: user!.uid, email: user.email!, name: user.displayName);
       }
       return null;
     } catch (e) {

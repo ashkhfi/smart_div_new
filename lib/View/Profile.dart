@@ -9,7 +9,7 @@ import '../Partials/Form/disableForm.dart';
 import '../Provider/user_provider.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({Key? key}) : super(key: key);
+  const Profile({super.key});
 
   @override
   _ProfileState createState() => _ProfileState();
@@ -21,37 +21,33 @@ class _ProfileState extends State<Profile> {
   final TextEditingController nameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isEditing = false;
+  String? name;
+  String? jabatan;
+  String? telepon;
+  String? image;
 
   Future<void> _pickImage(BuildContext context) async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      String userId = context.read<UserProvider>().userData!.uid;
-      final _userProvider = Provider.of<UserProvider>(context, listen: false);
-      await _userProvider.uploadAndSetUserImage(userId, image);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final XFile? imagea = await picker.pickImage(source: ImageSource.gallery);
+    String userId = context.read<UserProvider>().userData!.uid;
+   
+    if (imagea != null) {
+      image = await userProvider.uploadImage(userId, imagea);
     }
   }
 
-  void loadUser() {
-    final _userProvider = Provider.of<UserProvider>(context, listen: false);
-    String uid = _userProvider.userData!.uid;
-    _userProvider.loadUserData(uid);
-  }
 
-  @override
-  void initState() {
-    loadUser();
-    super.initState();
-  }
 
   void _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       await userProvider.updateUser(userProvider.userData!.uid, {
-        "image": userProvider.userData?.image ?? "",
-        "name": userProvider.userData!.name,
-        "jabatan": userProvider.userData?.jabatan
+        "image": image,
+        "name": name,
+        "jabatan": jabatan,
+        "telepon": telepon,
       });
 
       await userProvider.loadUserData(userProvider.userData!.uid);
@@ -60,9 +56,9 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    final _userProvider = Provider.of<UserProvider>(context);
-    emailController.text = _userProvider.userData?.email ?? "__";
-    nameController.text = _userProvider.userData?.name ?? "__";
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    emailController.text = userProvider.userData?.email ?? "__";
+    nameController.text = userProvider.userData?.name ?? "__";
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -77,7 +73,7 @@ class _ProfileState extends State<Profile> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 20.w, right: 100.w),
+                    padding: EdgeInsets.only(left: 20.w, right: 80.w),
                     child: KembaliButton(context, onTap: () {
                       Navigator.pop(context);
                     }),
@@ -109,10 +105,10 @@ class _ProfileState extends State<Profile> {
                     return CircleAvatar(
                       radius: 70.dm,
                       backgroundColor: Colors.white,
-                      backgroundImage: _userProvider.userData?.image != null
-                          ? NetworkImage(_userProvider.userData!.image!)
+                      backgroundImage: userProvider.userData?.image != null
+                          ? NetworkImage(userProvider.userData!.image!)
                           : null,
-                      child: _userProvider.userData?.image == null
+                      child: userProvider.userData?.image == null
                           ? Icon(Icons.person, size: 50.dm, color: Colors.grey)
                           : null,
                     );
@@ -138,24 +134,20 @@ class _ProfileState extends State<Profile> {
                             ),
                             autofocus: true,
                             onChanged: (value) {
-                              _userProvider.setName(value);
+                              name = value;
                             },
                           ),
                         )
                       : Flexible(
-                          child: Consumer(
-                            builder: (context, value, child) {
-                              return Text(
-                                nameController.text,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: const Color.fromRGBO(0, 73, 124, 1),
-                                  fontFamily: "Lato",
-                                  fontSize: 25.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              );
-                            },
+                          child: Text(
+                            name != null ? name! : nameController.text,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: const Color.fromRGBO(0, 73, 124, 1),
+                              fontFamily: "Lato",
+                              fontSize: 25.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                   IconButton(
@@ -215,7 +207,7 @@ class _ProfileState extends State<Profile> {
                         borderRadius: BorderRadius.circular(10.dm)),
                     child: TextFormField(
                       // controller: jabatanController,
-                      initialValue: _userProvider.userData?.jabatan ?? "",
+                      initialValue: userProvider.userData?.jabatan ?? "",
                       maxLines: 1,
                       style: TextStyle(
                           fontFamily: "Lato",
@@ -230,17 +222,56 @@ class _ProfileState extends State<Profile> {
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.circular(3.dm)),
                       ),
-                      validator: (String? sr) {
-                        if (sr == null || sr.isEmpty) {
-                          return "Field jabatan tidak boleh kosong!";
+
+                      onSaved: (newValue) {
+                        // Simpan nilai ke model atau provider
+                                          if (newValue != null) {
+                              jabatan = newValue;
+
                         }
-                        return null;
                       },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Text(
+                    "Nomer Telepon",
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontFamily: "Lato",
+                        fontSize: 14.sp),
+                  ),
+                  SizedBox(
+                    height: 5.h,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 240, 240, 240),
+                        borderRadius: BorderRadius.circular(10.dm)),
+                    child: TextFormField(
+                      // controller: jabatanController,
+                      initialValue: userProvider.userData?.telepon ?? "",
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontFamily: "Lato",
+                          color: Colors.black,
+                          fontSize: 14.sp),
+                      decoration: InputDecoration(
+                        isDense: true,
+                        hintText: "Nomor Telepon",
+                        disabledBorder: const OutlineInputBorder(
+                            gapPadding: 0, borderRadius: BorderRadius.zero),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(3.dm)),
+                      ),
+
                       onSaved: (newValue) {
                         // Simpan nilai ke model atau provider
                         if (newValue != null) {
-                          context.read<UserProvider>().userData?.jabatan =
-                              newValue;
+                              newValue = telepon;
                         }
                       },
                     ),
@@ -253,7 +284,7 @@ class _ProfileState extends State<Profile> {
               /*
               tombol untuk update profile
               */
-              _userProvider.isLoading
+              userProvider.isLoading
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )

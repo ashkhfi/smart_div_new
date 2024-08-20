@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:smart_div_new/Models/user_model.dart';
+import '../Services/auth_service.dart';
 import '../Services/user_service.dart';
 
 class UserProvider with ChangeNotifier {
   final UserService _userService = UserService();
+  final AuthService _authService = AuthService();
   UserModel? _userData;
   bool _isLoading = false;
 
@@ -16,6 +18,13 @@ class UserProvider with ChangeNotifier {
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
+  }
+
+
+
+  Future<bool> isLoggedIn() async {
+    final user = _authService.getCurrentUser();
+    return user != null;
   }
 
   Future<void> loadUserData(String userId) async {
@@ -54,13 +63,10 @@ class UserProvider with ChangeNotifier {
     _setLoading(false);
   }
 
-  Future<void> uploadAndSetUserImage(String userId, XFile filePath) async {
+  Future<void> uploadAndSetUserImage(String userId, String imgUrl) async {
     _setLoading(true);
-    String? imageUrl =
-        await _userService.uploadImage(File(filePath.path), userId);
-    if (imageUrl != null) {
-      await updateUser(userId, {'image': imageUrl});
-    }
+
+    await updateUser(userId, {'image': imgUrl});
     _setLoading(false);
   }
 
@@ -69,5 +75,16 @@ class UserProvider with ChangeNotifier {
       _userData!.name = newName ?? "";
       notifyListeners();
     }
+  }
+
+  Future<String> uploadImage(String userId, XFile imgUrl) async {
+    String? imageUrl =
+        await _userService.uploadImage(File(imgUrl.path), userId);
+    return imageUrl ?? "";
+  }
+
+  Future<void> clearUserData() async {
+    _userData = null;
+    notifyListeners();
   }
 }

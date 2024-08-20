@@ -2,6 +2,7 @@ class UserModel {
   String uid;
   String? name;
   String? image;
+  String? telepon; // Tambahan field telepon
   String email;
   String? jabatan; // Tambahan field jabatan
 
@@ -10,6 +11,7 @@ class UserModel {
     required this.email,
     this.name,
     this.image,
+    this.telepon, // Tambahan field telepon di sini
     this.jabatan, // Jabatan di sini bisa null saat register
   });
 
@@ -20,6 +22,7 @@ class UserModel {
       email: json['email'],
       name: json['name'],
       image: json['image'],
+      telepon: json['telepon'], // Mengambil data telepon dari JSON
       jabatan: json['jabatan'], // Mengambil data jabatan dari JSON
     );
   }
@@ -31,6 +34,7 @@ class UserModel {
       'email': email,
       'name': name,
       'image': image,
+      'telepon': telepon, // Mengubah data telepon menjadi JSON
       'jabatan': jabatan, // Mengubah data jabatan menjadi JSON
     };
   }

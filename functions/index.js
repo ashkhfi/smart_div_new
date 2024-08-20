@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 
 exports.scheduledDataProcessing = functions.pubsub
-  .schedule("59 23 * * *")  
+  .schedule("59 23 * * *")
   .timeZone("Asia/Jakarta")
   .onRun(async (context) => {
     try {
@@ -13,11 +13,10 @@ exports.scheduledDataProcessing = functions.pubsub
       const snapshot = await collectionSensor.limit(1).get();
 
       if (snapshot.empty) {
-        console.log('No documents found.');
+        console.log("No documents found.");
         return;
       }
 
-      
       for (const doc of snapshot.docs) {
         const data = doc.data();
 
@@ -35,10 +34,9 @@ exports.scheduledDataProcessing = functions.pubsub
         const newData = {
           re_usage: re_usage,
           pln_usage: pln_usage,
-          date: currentTime  
+          date: currentTime,
         };
 
-        
         await collectionDaily.add(newData);
         console.log(`Data processed and added to weekly_usage: ${doc.id}`);
       }
@@ -49,35 +47,63 @@ exports.scheduledDataProcessing = functions.pubsub
     }
   });
 
-  let counter = 1; // Variabel untuk menyimpan angka yang akan ditambahkan ke Firestore
+exports.sendNotification = functions.firestore
+  .document("sensors/kuATJ4JqTXPhVXQ3AUnx") // Ganti dengan ID dokumen yang diinginkan
+  .onUpdate(async (change, context) => {
+    const newValue = change.after.data();
+    const previousValue = change.before.data();
 
-  exports.number = functions.pubsub
-  .schedule('every 1 minutes') // Menjadwalkan setiap 1 menit
-  .onRun(async (context) => {
-    try {
-      // Mendapatkan dokumen counter
-      const doc = await counterDocRef.get();
+    // Tindakan yang ingin dilakukan saat dokumen diperbarui
+    const allFieldsZero =
+      newValue.i_inverter === "0.00" &&
+      newValue.v_inverter === "0.00" &&
+      newValue.i_pln === "0.00" &&
+      newValue.v_pln === "0.00";
 
-      let currentCounter = 1;
+    // Cek juga jika field-field ini berubah dari nilai lain menjadi "0,00"
+    const fieldsChangedToZero =
+      (previousValue.i_inverter !== "0.00" && newValue.i_inverter === "0.00") ||
+      (previousValue.v_inverter !== "0.00" && newValue.v_inverter === "0.00") ||
+      (previousValue.i_pln !== "0.00" && newValue.i_pln === "0.00") ||
+      (previousValue.v_pln !== "0.00" && newValue.v_pln === "0.00");
 
-      if (doc.exists) {
-        // Jika dokumen ada, ambil nilai counter saat ini
-        currentCounter = doc.data().number || 1;
-      } else {
-        // Jika dokumen tidak ada, buat dokumen dengan nilai awal
-        await counterDocRef.set({ number: currentCounter });
+    if (allFieldsZero && fieldsChangedToZero) {
+      const payload = {
+        notification: {
+          title: "Daya Mati",
+          body: "Tidak ada supply daya masuk, cek ke lokasi sekarang",
+          sound: "default",
+        },
+      };
+
+      // Mengirim notifikasi ke topic
+      try {
+        const response = await admin
+          .messaging()
+          .sendToTopic("power_status", payload);
+          console.log('FCM Response:', response);
+
+        if (response.successCount > 0) {
+          console.log(
+            `${response.successCount} messages were sent successfully`
+          );
+        } else {
+          console.log("No messages were sent successfully");
+        }
+
+        if (response.failureCount > 0) {
+          const failedTokens = [];
+          response.responses.forEach((resp, idx) => {
+            if (!resp.success) {
+              failedTokens.push(tokens[idx]);
+            }
+          });
+          console.log("List of tokens that caused failures: " + failedTokens);
+        }
+      } catch (error) {
+        console.error("Error sending notification: ", error);
       }
-
-      const collection = admin.firestore().collection('numbers');
-      // Menambahkan dokumen baru dengan nilai counter
-      await collection.add({ number: currentCounter });
-
-      console.log(`Added number ${currentCounter} to Firestore`);
-
-      // Memperbarui nilai counter untuk eksekusi berikutnya
-      await counterDocRef.update({ number: currentCounter + 1 });
-
-    } catch (error) {
-      console.error('Error updating document: ', error);
     }
+
+    return null;
   });

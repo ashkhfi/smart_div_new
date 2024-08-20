@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_div_new/Provider/auth_provider.dart';
+import 'package:smart_div_new/Provider/fcm_provider.dart';
 
 import '../Partials/Button/BackButton.dart';
 import '../Provider/user_provider.dart';
 import 'Login.dart';
+import 'Notifikasi.dart';
 import 'Profile.dart';
 
 class Pengaturan extends StatefulWidget {
@@ -19,7 +22,6 @@ class _PengaturanState extends State<Pengaturan> {
   /// untuk list widget pengaturan
   ///
   List<dynamic> data_item = [
-    {'name': 'Nomor telepon', 'icon': Icons.phone_android, 'go': const Login()},
     {
       'name': 'Profil',
       'icon': LucideIcons.user,
@@ -28,25 +30,9 @@ class _PengaturanState extends State<Pengaturan> {
     {
       'name': 'Notifikasi',
       'icon': LucideIcons.bell,
-      'go': const Login(),
-    },
-    {
-      'name': 'Keluar',
-      'icon': LucideIcons.logOut,
-      'go': const Login(),
+      'go': const NotificationSettings(),
     },
   ];
-  void loadUser() {
-    final _userProvider = Provider.of<UserProvider>(context, listen: false);
-    String uid = _userProvider.userData!.uid;
-    _userProvider.loadUserData(uid);
-  }
-
-  @override
-  void initState() {
-    loadUser();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,12 +74,17 @@ class _PengaturanState extends State<Pengaturan> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 CircleAvatar(
-                  radius: 30.dm,
-                  backgroundImage:
-                      const AssetImage("assets/images/man_21.webp"),
+                  radius: 20.dm,
+                  backgroundColor: Colors.white,
+                  backgroundImage: userProvider.userData?.image != null
+                      ? NetworkImage(userProvider.userData!.image!)
+                      : null,
+                  child: userProvider.userData?.image == null
+                      ? Icon(Icons.person, size: 50.dm, color: Colors.grey)
+                      : null,
                 ),
                 SizedBox(
-                  width: 10.w,
+                  width: 20.w,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,21 +113,17 @@ class _PengaturanState extends State<Pengaturan> {
           SizedBox(
             height: 50.h,
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.6,
-            width: MediaQuery.of(context).size.width,
-            child: ListView.builder(
-                itemCount: data_item.length,
-                itemBuilder: ((context, index) {
+          Expanded(
+            child: ListView(
+              children: [
+                ...data_item.map((item) {
                   return InkWell(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => data_item[index]['go'])),
+                    onTap: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => item['go'])),
                     child: ListTile(
-                      leading: Icon(data_item[index]['icon']),
+                      leading: Icon(item['icon']),
                       title: Text(
-                        data_item[index]['name'],
+                        item['name'],
                         style: TextStyle(
                             color: const Color.fromRGBO(0, 73, 124, 1),
                             fontFamily: "Lato",
@@ -150,8 +137,68 @@ class _PengaturanState extends State<Pengaturan> {
                       ),
                     ),
                   );
-                })),
-          )
+                }),
+                ListTile(
+                  onTap: () async {
+                    final notifProvider = Provider.of<NotificationProvider>(
+                        context,
+                        listen: false);
+                    final authProvider =
+                        Provider.of<AuthProvider>(context, listen: false);
+
+                    bool shouldLogout = await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Konfirmasi"),
+                          content: const Text("Apakah Anda yakin ingin keluar?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(false); // Tidak jadi keluar
+                              },
+                              child: const Text("Tidak"),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const Login(),
+                                  ),
+                                );
+
+                                await Provider.of<NotificationProvider>(context,
+                                        listen: false)
+                                    .logout("power_status");
+                                await authProvider.signOut();
+                              },
+                              child: const Text("Ya"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  leading: const Icon(LucideIcons.logOut),
+                  title: Text(
+                    "Keluar",
+                    style: TextStyle(
+                        color: const Color.fromRGBO(0, 73, 124, 1),
+                        fontFamily: "Lato",
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  trailing: Icon(
+                    Icons.arrow_forward_ios,
+                    color: const Color.fromRGBO(0, 73, 124, 1),
+                    size: 20.dm,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

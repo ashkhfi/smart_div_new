@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:smart_div_new/Provider/auth_provider.dart';
 
 import '../Partials/Button/BackButton.dart';
 import '../Partials/Button/BaseButton.dart';
@@ -17,6 +19,7 @@ class _LupaPassState extends State<LupaPass> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       body: Column(
         children: [
@@ -95,11 +98,26 @@ class _LupaPassState extends State<LupaPass> {
               color: const Color.fromRGBO(2, 138, 234, 1),
               fontColor: Colors.white,
               label: "Kirim",
-              borderRadius: 10.dm, onTap: () {
+              borderRadius: 10.dm, onTap: () async {
             /*
                       function untuk simpan data di sini
                     */
+            if (emailController.text.isNotEmpty) {
+              await authProvider.resetPassword(emailController.text);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Password reset link sent!')),
+              );
+            }
           }),
+          if (authProvider.errorMessage != null)
+            Text(
+              authProvider.errorMessage.toString(),
+              style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: "Lato",
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold),
+            ),
         ],
       ),
     );

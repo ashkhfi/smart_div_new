@@ -1,10 +1,13 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 import '../Partials/Button/BackButton.dart';
 import '../Partials/Card/CardBiaya.dart';
 import '../Partials/Widget/PercentBar.dart';
-
+import '../Provider/expense_provider.dart';
+import '../utils/formater/format_rp.dart';
 
 class PengeluaranBiaya extends StatefulWidget {
   const PengeluaranBiaya({super.key});
@@ -15,7 +18,21 @@ class PengeluaranBiaya extends StatefulWidget {
 
 class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      Provider.of<ExpenseProvider>(context, listen: false).loadData();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Menggunakan listen: true untuk mendapatkan perubahan data setiap kali provider di-update
+    final expenseProvider = Provider.of<ExpenseProvider>(context);
+    String percentage = formatCurrency(expenseProvider.percentage ?? 0.0);
+
+    double percentageFix =
+        double.parse(percentage.replaceAll(RegExp(r'[^0-9]'), ''));
     return Scaffold(
       body: Stack(children: [
         Column(
@@ -61,7 +78,10 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
             SizedBox(
               height: 20.h,
             ),
-            PercentBar(context, percent: 0.6689, money: "525.000"),
+            PercentBar(context,
+                percent: percentageFix / 100,
+                money: formatCurrency(
+                    expenseProvider.savings?.toDouble() ?? 0.0)),
             SizedBox(
               height: 20.h,
             ),
@@ -106,14 +126,24 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(left: 10.w, right: 10.w),
-                      child: CardBiaya(context, title:"Pengeluaran minggu ini", total: "350.000")
+                      child: CardBiaya(
+                        context,
+                        title: "Pengeluaran minggu ini",
+                        total: formatCurrency(
+                            expenseProvider.thisWeekUsage?.toDouble() ?? 0.0),
+                      ),
                     ),
                     SizedBox(
                       height: 20.h,
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 10.w, right: 10.w),
-                      child: CardBiaya(context, title:"Pengeluaran kondisi normal", total: "500.000")
+                      child: CardBiaya(
+                        context,
+                        title: "Pengeluaran kondisi normal",
+                        total: formatCurrency(
+                            expenseProvider.normalUsage?.toDouble() ?? 0.0),
+                      ),
                     ),
                   ],
                 ),

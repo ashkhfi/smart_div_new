@@ -1,7 +1,7 @@
 
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:smart_div_new/Services/api_service.dart';
+import 'package:smart_div_new/Services/wheater_service.dart';
 
 void main() {
   group('WeatherService Print Test', () {

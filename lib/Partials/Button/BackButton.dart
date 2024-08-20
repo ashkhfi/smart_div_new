@@ -11,14 +11,18 @@ Widget KembaliButton(
     decoration: BoxDecoration(
         color: const Color.fromRGBO(2, 138, 234, 1),
         borderRadius: BorderRadius.circular(10.dm)),
-    child: Center(
-      child: IconButton(
-          onPressed: onTap,
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-            size: 15,
-          )),
+    child: Padding(
+      padding: EdgeInsets.only(left:3.w),
+      child: Align(
+        alignment: Alignment.center,
+        child: IconButton(
+            onPressed: onTap,
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: Colors.white,
+              size: 15,
+            )),
+      ),
     ),
   );
 }

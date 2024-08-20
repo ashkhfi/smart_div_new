@@ -34,7 +34,7 @@ Widget CardBiaya(BuildContext context, {
             ),
           ),
           Text(
-            "Rp $total",
+            total,
             style: TextStyle(
                 color: const Color.fromRGBO(0, 73, 124, 1),
                 fontFamily: "Lato",
