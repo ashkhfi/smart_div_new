@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:smart_div_new/Models/sensor_model.dart';
 import 'package:smart_div_new/Services/sensor_service.dart';
 
-
 class SensorProvider with ChangeNotifier {
   final SensorService _sensorService = SensorService();
   sensorModel? _sensor;
@@ -13,19 +12,31 @@ class SensorProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> fetchData() async {
+  SensorProvider() {
+    // Memulai stream untuk mendengarkan data secara realtime
+    getDataSensor();
+  }
+
+  void getDataSensor() {
     _isLoading = true;
     notifyListeners();
 
     try {
-      _sensor = await _sensorService.getData();
-      _errorMessage = null;
+      _sensorService.streamData().listen((sensorData) {
+        _sensor = sensorData;
+        _isLoading = false;
+        _errorMessage = null;
+        notifyListeners();
+      });
     } catch (e) {
       _sensor = null;
-      _errorMessage = 'Error fetching data: $e';
-    } finally {
       _isLoading = false;
+      _errorMessage = 'Error streaming data: $e';
       notifyListeners();
     }
+  }
+
+  void updateRelay(String commandAndroid) async {
+    await _sensorService.updateRelayStatus(commandAndroid);
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_div_new/Provider/sensor_provider.dart';
 import 'package:smart_div_new/Provider/weekly_usage_provider.dart';
 import '../Partials/Button/BackButton.dart';
 import '../Partials/Card/BaseCard.dart';
@@ -28,6 +29,7 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
   @override
   Widget build(BuildContext context) {
     final usageProvider = Provider.of<WeeklyUsageProvider>(context);
+    final sensorProvider = Provider.of<SensorProvider>(context);
 
     return Scaffold(
       body: usageProvider.isLoading
@@ -83,7 +85,7 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
                         ],
                       ),
                       child: LineChartSample(
-                        weeklyUsageData: usageProvider.weeklyUsages,
+                        weeklyUsageData: usageProvider.allweeklyUsages,
                       ),
                     ),
                     SizedBox(height: 10.h),
@@ -117,89 +119,116 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
                                 borderRadius: BorderRadius.circular(10.dm)),
                             child: Padding(
                               padding: EdgeInsets.all(20.dm),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                              child: Consumer<SensorProvider>(
+                                builder: (context, value, child) {
+                                  // Fungsi untuk mengonversi String ke double dengan nilai default
+                                  double parseDouble(String? value,
+                                      {double defaultValue = 0.00}) {
+                                    if (value == null) return defaultValue;
+                                    final parsed = double.tryParse(value);
+                                    return parsed ?? defaultValue;
+                                  }
+
+                                  double vInverter = parseDouble(sensorProvider
+                                      .sensor?.vInverter as String?);
+                                  double iInverter = parseDouble(sensorProvider
+                                      .sensor?.iInverter as String?);
+                                  double vPln = parseDouble(
+                                      sensorProvider.sensor?.vPln as String?);
+                                  double iPln = parseDouble(
+                                      sensorProvider.sensor?.iPln as String?);
+
+                                  double reUsage =
+                                      (vInverter * iInverter) / 1000;
+                                  double plnUsage = (vPln * iPln) / 1000;
+
+
+                                  return Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        "Penggunaan RE",
-                                        style: TextStyle(
-                                            color: const Color.fromRGBO(
-                                                0, 73, 124, 1),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.sp,
-                                            fontFamily: "Lato"),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Penggunaan RE",
+                                            style: TextStyle(
+                                                color: const Color.fromRGBO(
+                                                    0, 73, 124, 1),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.sp,
+                                                fontFamily: "Lato"),
+                                          ),
+                                          Text(
+                                            "${reUsage.toStringAsFixed(2)} Kwh",
+                                            style: TextStyle(
+                                                color: const Color.fromRGBO(
+                                                    0, 73, 124, 1),
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 16.sp,
+                                                fontFamily: "Lato"),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        "${usageProvider.weeklyUsages[0].reUsage.toStringAsFixed(2)} Kwh",
-                                        style: TextStyle(
-                                            color: const Color.fromRGBO(
-                                                0, 73, 124, 1),
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 16.sp,
-                                            fontFamily: "Lato"),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Penggunaan PLN",
+                                            style: TextStyle(
+                                                color: const Color.fromRGBO(
+                                                    0, 73, 124, 1),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.sp,
+                                                fontFamily: "Lato"),
+                                          ),
+                                          Text(
+                                            "${plnUsage.toStringAsFixed(2)} Kwh",
+                                            style: TextStyle(
+                                                color: const Color.fromRGBO(
+                                                    0, 73, 124, 1),
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 16.sp,
+                                                fontFamily: "Lato"),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Presentase",
+                                            style: TextStyle(
+                                                color: const Color.fromRGBO(
+                                                    0, 73, 124, 1),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.sp,
+                                                fontFamily: "Lato"),
+                                          ),
+                                          Text(
+                                            "${(reUsage / plnUsage * 100).toStringAsFixed(2)}%",
+                                            style: TextStyle(
+                                                color: const Color.fromRGBO(
+                                                    0, 73, 124, 1),
+                                                fontWeight: FontWeight.normal,
+                                                fontSize: 16.sp,
+                                                fontFamily: "Lato"),
+                                          ),
+                                        ],
                                       ),
                                     ],
-                                  ),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Penggunaan PLN",
-                                        style: TextStyle(
-                                            color: const Color.fromRGBO(
-                                                0, 73, 124, 1),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.sp,
-                                            fontFamily: "Lato"),
-                                      ),
-                                      Text(
-                                        "${usageProvider.weeklyUsages[0].plnUsage.toStringAsFixed(2)} Kwh",
-                                        style: TextStyle(
-                                            color: const Color.fromRGBO(
-                                                0, 73, 124, 1),
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 16.sp,
-                                            fontFamily: "Lato"),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: 10.h,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Presentase",
-                                        style: TextStyle(
-                                            color: const Color.fromRGBO(
-                                                0, 73, 124, 1),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.sp,
-                                            fontFamily: "Lato"),
-                                      ),
-                                      Text(
-                                        "${(usageProvider.weeklyUsages[0].reUsage / usageProvider.weeklyUsages[0].plnUsage * 100).toStringAsFixed(2)}%",
-                                        style: TextStyle(
-                                            color: const Color.fromRGBO(
-                                                0, 73, 124, 1),
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 16.sp,
-                                            fontFamily: "Lato"),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -229,15 +258,15 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
                                       ? () {
                                           usageProvider.fetchPreviousPage();
                                         }
-                                      : null, // Nonaktifkan tombol jika tidak ada halaman berikutnya
+                                      : null, 
                                   icon: Icon(
                                     Icons.arrow_back_ios_new_outlined,
                                     size: 20,
-                                    color: usageProvider.hasNextPage
+                                    color: usageProvider.hasPreviousPage
                                         ? const Color.fromRGBO(0, 73, 124,
-                                            1) // Biru jika ada halaman berikutnya
+                                            1) 
                                         : Colors
-                                            .grey, // Abu-abu jika tidak ada halaman berikutnya
+                                            .grey, 
                                   ),
                                 ),
                                 Text(
@@ -415,26 +444,6 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
                                     );
                                   },
                                 ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  if (provider.hasPreviousPage)
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        provider.fetchPreviousPage();
-                                      },
-                                      child: const Text('Previous'),
-                                    ),
-                                  if (provider.hasNextPage)
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        provider.fetchNextPage();
-                                      },
-                                      child: const Text('Next'),
-                                    ),
-                                ],
                               ),
                             ],
                           );

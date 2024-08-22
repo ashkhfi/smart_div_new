@@ -48,40 +48,31 @@ exports.scheduledDataProcessing = functions.pubsub
   });
 
 exports.sendNotification = functions.firestore
-  .document("sensors/kuATJ4JqTXPhVXQ3AUnx") // Ganti dengan ID dokumen yang diinginkan
+  .document("sensors/device1") // Ganti dengan ID dokumen yang diinginkan
   .onUpdate(async (change, context) => {
     const newValue = change.after.data();
     const previousValue = change.before.data();
-
+    console.log("Jalan Coy!");
     // Tindakan yang ingin dilakukan saat dokumen diperbarui
     const allFieldsZero =
-      newValue.i_inverter === "0.00" &&
-      newValue.v_inverter === "0.00" &&
-      newValue.i_pln === "0.00" &&
-      newValue.v_pln === "0.00";
-
-    // Cek juga jika field-field ini berubah dari nilai lain menjadi "0,00"
-    const fieldsChangedToZero =
-      (previousValue.i_inverter !== "0.00" && newValue.i_inverter === "0.00") ||
-      (previousValue.v_inverter !== "0.00" && newValue.v_inverter === "0.00") ||
-      (previousValue.i_pln !== "0.00" && newValue.i_pln === "0.00") ||
-      (previousValue.v_pln !== "0.00" && newValue.v_pln === "0.00");
-
-    if (allFieldsZero && fieldsChangedToZero) {
+      (newValue.i_inverter === "0.00" || newValue.i_inverter === " NAN") &&
+      (newValue.v_inverter === "0.00" || newValue.v_inverter === " NAN") &&
+      (newValue.i_pln === "0.00" || newValue.i_pln === " NAN") &&
+      (newValue.v_pln === "0.00" || newValue.v_pln === " NAN");
+      
+    if (allFieldsZero) {
       const payload = {
         notification: {
           title: "Daya Mati",
           body: "Tidak ada supply daya masuk, cek ke lokasi sekarang",
-          sound: "default",
         },
+        topic: "power_status", // Pastikan ini sesuai dengan format yang benar di v1 API
       };
 
-      // Mengirim notifikasi ke topic
       try {
-        const response = await admin
-          .messaging()
-          .sendToTopic("power_status", payload);
-          console.log('FCM Response:', response);
+        console.log("OTW kirim coy!");
+        const response = await admin.messaging().send(payload);
+        console.log("FCM Response:", response);
 
         if (response.successCount > 0) {
           console.log(

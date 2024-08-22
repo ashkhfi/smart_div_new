@@ -5,16 +5,20 @@ import 'package:provider/provider.dart';
 import '../Partials/Button/BackButton.dart';
 import '../Provider/fcm_provider.dart';
 
-
 class NotificationSettings extends StatelessWidget {
-  final String topic = "power_status";
+  final String userId;
 
-  const NotificationSettings({super.key}); 
+  const NotificationSettings({super.key, required this.userId});
+
+  final String topic = "power_status";
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<NotificationProvider>(context, listen: false)
+          .fetchNotificationStatus(userId);
+    });
     return Scaffold(
-  
       body: Column(
         children: [
           SizedBox(
@@ -44,16 +48,16 @@ class NotificationSettings extends StatelessWidget {
               )
             ],
           ),
+          SizedBox(height: 30),
           Consumer<NotificationProvider>(
             builder: (context, provider, child) {
-              return ListTile(
-                title: const Text('Background Notifikasi'),
-                trailing: Switch(
-                  value: provider.isSubscribed,
-                  onChanged: (value) async {
-                    await provider.toggleSubscription(topic);
-                  },
-                ),
+              return SwitchListTile(
+                title: Text('Aktifkan Notifikasi'),
+                value: provider.notifStatus,
+                onChanged: (value) {
+                  provider.updateNotificationStatus(userId, value);
+                  provider.toggleSubscription("power_status");
+                },
               );
             },
           ),

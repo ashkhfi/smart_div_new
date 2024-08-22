@@ -3,6 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_div_new/Provider/auth_provider.dart';
 
+import 'Home.dart';
+import 'Login.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -11,6 +14,33 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Future<void> _checkLoginStatus() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    bool isLoggedIn = await authProvider.checkLoginStatus();
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Home()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Menunda selama 2 detik sebelum berpindah ke halaman lain
+    Future.delayed(const Duration(seconds: 2), () {    
+      // Navigasi ke halaman berikutnya
+      _checkLoginStatus();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -19,22 +49,14 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () {
-                // authProvider.signIn('ashkh224@gmail.com', 'ashkh12345');
-                authProvider.signOut();
-              },
-              child: const Text("test"),
+            SizedBox(
+              height: 10.h,
             ),
-            Container(
-              color: const Color.fromRGBO(2, 138, 234, 1),
-              child: Text(
-                "SmartGrid",
-                style: TextStyle(
-                    fontFamily: "Lato",
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Image.asset(
+                'assets/images/logo-albitec-small.png',
+                fit: BoxFit.cover,
               ),
             ),
           ],

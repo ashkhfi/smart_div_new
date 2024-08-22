@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
 import '../Models/wheater_model.dart';
 
 class WeatherService {
@@ -21,6 +21,13 @@ class WeatherService {
     } catch (e) {
       print('Error: $e');
       return null;
+    }
+  }
+
+  Stream<WeatherDataModel?> getWeatherStream(Duration interval) async* {
+    while (true) {
+      yield await fetchWeatherData();
+      await Future.delayed(interval);
     }
   }
 }

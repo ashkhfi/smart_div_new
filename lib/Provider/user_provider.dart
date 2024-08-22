@@ -12,6 +12,10 @@ class UserProvider with ChangeNotifier {
   UserModel? _userData;
   bool _isLoading = false;
 
+  UserProvider() {
+    loadUserData();
+  }
+
   UserModel? get userData => _userData;
   bool get isLoading => _isLoading;
 
@@ -20,23 +24,19 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+ 
 
-
-  Future<bool> isLoggedIn() async {
-    final user = _authService.getCurrentUser();
-    return user != null;
-  }
-
-  Future<void> loadUserData(String userId) async {
-    // _setLoading(true);
-    Map<String, dynamic>? userJson = await _userService.getUser(userId);
+  Future<void> loadUserData() async {
+    _setLoading(true);
+    String? uid = await _authService.getCurrentUser(); 
+    Map<String, dynamic>? userJson = await _userService.getUser(uid!);
     if (userJson != null) {
       _userData = UserModel.fromJson(userJson);
       print("berhasil get data user a");
     } else {
       _userData = null;
     }
-    // _setLoading(false);
+    _setLoading(false);
   }
 
   Future<void> addUser(String userId, UserModel userModel) async {
@@ -63,23 +63,11 @@ class UserProvider with ChangeNotifier {
     _setLoading(false);
   }
 
-  Future<void> uploadAndSetUserImage(String userId, String imgUrl) async {
-    _setLoading(true);
-
-    await updateUser(userId, {'image': imgUrl});
-    _setLoading(false);
-  }
-
-  void setName(String? newName) {
-    if (_userData != null) {
-      _userData!.name = newName ?? "";
-      notifyListeners();
-    }
-  }
 
   Future<String> uploadImage(String userId, XFile imgUrl) async {
     String? imageUrl =
         await _userService.uploadImage(File(imgUrl.path), userId);
+    print("berhasil uploud gambar");
     return imageUrl ?? "";
   }
 

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -21,22 +22,33 @@ class Pengaturan extends StatefulWidget {
 class _PengaturanState extends State<Pengaturan> {
   /// untuk list widget pengaturan
   ///
-  List<dynamic> data_item = [
-    {
-      'name': 'Profil',
-      'icon': LucideIcons.user,
-      'go': const Profile(),
-    },
-    {
-      'name': 'Notifikasi',
-      'icon': LucideIcons.bell,
-      'go': const NotificationSettings(),
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    // Pastikan userData sudah tersedia sebelum melanjutkan
+    if (userProvider.userData == null) {
+      return Scaffold(
+        body: Center(
+            child:
+                CircularProgressIndicator()), // Menampilkan loader saat data belum siap
+      );
+    }
+
+    List<dynamic> data_item = [
+      {
+        'name': 'Profil',
+        'icon': LucideIcons.user,
+        'go': const Profile(),
+      },
+      {
+        'name': 'Notifikasi',
+        'icon': LucideIcons.bell,
+        'go': NotificationSettings(
+          userId: userProvider.userData!.uid,
+        ),
+      },
+    ];
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -76,12 +88,10 @@ class _PengaturanState extends State<Pengaturan> {
                 CircleAvatar(
                   radius: 20.dm,
                   backgroundColor: Colors.white,
-                  backgroundImage: userProvider.userData?.image != null
-                      ? NetworkImage(userProvider.userData!.image!)
-                      : null,
-                  child: userProvider.userData?.image == null
-                      ? Icon(Icons.person, size: 50.dm, color: Colors.grey)
-                      : null,
+                  backgroundImage: CachedNetworkImageProvider(
+                    userProvider.userData?.image ?? "",
+                    cacheKey: userProvider.userData?.image ?? "",
+                  ),
                 ),
                 SizedBox(
                   width: 20.w,
@@ -90,7 +100,7 @@ class _PengaturanState extends State<Pengaturan> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      userProvider.userData?.name ?? "__",
+                      userProvider.userData?.name ?? "xxxxx",
                       style: TextStyle(
                           color: const Color.fromRGBO(0, 73, 124, 1),
                           fontFamily: "Lato",
@@ -98,7 +108,7 @@ class _PengaturanState extends State<Pengaturan> {
                           fontSize: 20.sp),
                     ),
                     Text(
-                      userProvider.userData?.email ?? "__",
+                      userProvider.userData?.email ?? "xxx",
                       style: TextStyle(
                           color: const Color.fromRGBO(0, 73, 124, 1),
                           fontFamily: "Lato",
@@ -151,7 +161,8 @@ class _PengaturanState extends State<Pengaturan> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: const Text("Konfirmasi"),
-                          content: const Text("Apakah Anda yakin ingin keluar?"),
+                          content:
+                              const Text("Apakah Anda yakin ingin keluar?"),
                           actions: [
                             TextButton(
                               onPressed: () {

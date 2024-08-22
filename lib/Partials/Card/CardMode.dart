@@ -17,31 +17,8 @@ class CardMode extends StatefulWidget {
 }
 
 class _CardModeState extends State<CardMode> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+ 
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Future<void> _handleRefresh() async {
-    _controller.repeat();
-    try {
-      await widget.onRefresh();
-    } finally {
-      _controller.stop();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,23 +45,15 @@ class _CardModeState extends State<CardMode> with SingleTickerProviderStateMixin
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text("Mode : [${widget.mode}]", style: TextStyle(
+                Text("Mode : ${widget.mode}", style: TextStyle(
                   color: Colors.white, 
                   fontFamily: "Lato",
                   fontSize: 18.sp
                 ),),
                 SizedBox(width: 10.w,),
                 InkWell(
-                  onTap: _handleRefresh,
-                  child: AnimatedBuilder(
-                    animation: _controller,
-                    builder: (context, child) {
-                      return Transform.rotate(
-                        angle: _controller.value * 2.0 * 3.141592653589793,
-                        child: Icon(LucideIcons.refreshCw, color: Colors.white, size: 25.sp),
-                      );
-                    },
-                  ),
+                  onTap: (){},
+                  child: Icon(LucideIcons.refreshCw, color: Colors.white, size: 25.sp),
                 ),
               ],
             ),

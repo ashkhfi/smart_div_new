@@ -100,8 +100,16 @@ class _RegisterState extends State<Register> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 70.h),
-
+            SizedBox(
+              height: 10.h,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Image.asset(
+                'assets/images/logo-albitec-small.png',
+                fit: BoxFit.cover,
+              ),
+            ),
             Align(
               alignment: Alignment.topCenter,
               child: Text(

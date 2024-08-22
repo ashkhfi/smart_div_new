@@ -5,6 +5,7 @@ class UserModel {
   String? telepon; // Tambahan field telepon
   String email;
   String? jabatan; // Tambahan field jabatan
+  bool? notif; // Tambahan field notif
 
   UserModel({
     required this.uid,
@@ -13,9 +14,10 @@ class UserModel {
     this.image,
     this.telepon, // Tambahan field telepon di sini
     this.jabatan, // Jabatan di sini bisa null saat register
+    this.notif, // Notif di sini bisa null saat register
   });
 
-  // Method untuk membuat UserModel dari data JSON
+  
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       uid: json['uid'],
@@ -24,10 +26,11 @@ class UserModel {
       image: json['image'],
       telepon: json['telepon'], // Mengambil data telepon dari JSON
       jabatan: json['jabatan'], // Mengambil data jabatan dari JSON
+      notif: json['notif'], // Mengambil data notif dari JSON
     );
   }
 
-  // Method untuk mengubah UserModel menjadi data JSON
+  
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
@@ -36,6 +39,7 @@ class UserModel {
       'image': image,
       'telepon': telepon, // Mengubah data telepon menjadi JSON
       'jabatan': jabatan, // Mengubah data jabatan menjadi JSON
+      'notif': notif, // Mengubah data notif menjadi JSON
     };
   }
 }

@@ -4,6 +4,8 @@ import '../Services/fcm_service.dart';
 class NotificationProvider with ChangeNotifier {
   final FCMService _fcmService = FCMService();
   bool _isSubscribed = false;
+  bool _notifStatus = false;
+  bool get notifStatus => _notifStatus;
 
   bool get isSubscribed => _isSubscribed;
 
@@ -11,13 +13,39 @@ class NotificationProvider with ChangeNotifier {
     initializeNotifications(); // Panggil saat provider diinisialisasi
   }
 
+  // Mengambil status notifikasi dari Firestore
+  Future<void> fetchNotificationStatus(String userId) async {
+    try {
+      _notifStatus = await _fcmService.getNotificationStatus(userId);
+      notifyListeners();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  // Mengubah status notifikasi dan update di Firestore
+  Future<void> updateNotificationStatus(String userId, bool status) async {
+    try {
+      _notifStatus = status;
+      await _fcmService.updateNotificationStatus(userId, status);
+      notifyListeners();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future<void> toggleSubscription(String topic) async {
     if (_isSubscribed) {
       await _fcmService.unsubscribeFromTopic(topic);
+      print("unsub");
       _isSubscribed = false;
+      print(_isSubscribed);
     } else {
       await _fcmService.subscribeToTopic(topic);
+      print("sub");
+      print(_isSubscribed);
       _isSubscribed = true;
+      print(_isSubscribed);
     }
     notifyListeners();
   }
@@ -32,7 +60,7 @@ class NotificationProvider with ChangeNotifier {
       await _fcmService.unsubscribeFromTopic(topic);
       _isSubscribed = false;
     }
-    // Tambahkan logika lain untuk logout seperti membersihkan token, dll.
+  
     notifyListeners();
   }
 

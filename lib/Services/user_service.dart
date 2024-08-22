@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
+import 'package:smart_div_new/Models/user_model.dart';
+
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -31,6 +33,36 @@ class UserService {
     } catch (e) {
       print('Error updating user: $e');
       rethrow;
+    }
+  }
+
+  Future<void> notif(String userId, bool notif) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({'notif': notif});
+    } catch (e) {
+      print('Error updating user: $e');
+      rethrow;
+    }
+  }
+
+ Stream<UserModel?> streamData(String uid) {
+    try {
+      // Mengambil data secara real-time dari dokumen dengan ID tertentu
+      return _firestore
+          .collection('users')
+          .doc(uid)
+          .snapshots()
+          .map((snapshot) {
+        if (snapshot.exists) {
+          return UserModel.fromJson(snapshot.data() as Map<String, dynamic>);
+        } else {
+          return null; // Dokumen tidak ditemukan
+        }
+      });
+    } catch (e) {
+      print('Error getting document stream: $e');
+      return Stream.value(
+          null); // Mengembalikan stream kosong jika terjadi error
     }
   }
 

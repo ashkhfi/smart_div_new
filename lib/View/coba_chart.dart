@@ -46,6 +46,9 @@ class LineChartSample extends StatelessWidget {
       const Color(0xff2575fc),
     ];
 
+    // Membalik urutan data
+    List<WeeklyUsage> reversedData = weeklyUsageData.reversed.toList();
+
     return LineChartData(
       backgroundColor: Colors.white, // Background chart warna terang
       lineTouchData: LineTouchData(
@@ -58,7 +61,7 @@ class LineChartSample extends StatelessWidget {
             );
             return [
               LineTooltipItem(
-                'RE : ${touchedSpot.y}',
+                'RE : ${touchedSpot.y.isNaN ? 0 : touchedSpot.y}',
                 const TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -67,7 +70,7 @@ class LineChartSample extends StatelessWidget {
               ),
               if (touchedSpots.length > 1)
                 LineTooltipItem(
-                  'PLN : ${touchedSpots.last.y}\n\n ${DateFormat('d/M/y', 'id_ID').format(weeklyUsageData[touchedSpots.last.x.toInt()].date)}',
+                  'PLN : ${touchedSpots.last.y.isNaN ? 0 : touchedSpots.last.y}\n\n ${DateFormat('d/M/y', 'id_ID').format(reversedData[touchedSpots.last.x.toInt()].date)}',
                   const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -109,7 +112,7 @@ class LineChartSample extends StatelessWidget {
           sideTitles: SideTitles(
             showTitles: true,
             reservedSize: 30,
-            interval: weeklyUsageData.length.toDouble() - 1,
+            interval: reversedData.length.toDouble() - 1,
             getTitlesWidget: (double value, TitleMeta meta) {
               int index = value.toInt();
               if (index == 0) {
@@ -117,7 +120,7 @@ class LineChartSample extends StatelessWidget {
                   axisSide: meta.axisSide,
                   child: Text(
                     DateFormat('dd/MM')
-                        .format(weeklyUsageData.first.date),
+                        .format(reversedData.first.date),
                     style: const TextStyle(
                       fontSize: 10,
                       fontStyle: FontStyle.italic, // Tanggal miring
@@ -125,12 +128,12 @@ class LineChartSample extends StatelessWidget {
                     ),
                   ),
                 );
-              } else if (index == weeklyUsageData.length - 1) {
+              } else if (index == reversedData.length - 1) {
                 return SideTitleWidget(
                   axisSide: meta.axisSide,
                   child: Text(
                     DateFormat('dd/MM')
-                        .format(weeklyUsageData.last.date),
+                        .format(reversedData.last.date),
                     style: const TextStyle(
                       fontSize: 10,
                       fontStyle: FontStyle.italic, // Tanggal miring
@@ -169,13 +172,14 @@ class LineChartSample extends StatelessWidget {
         border: Border.all(color: const Color(0xffe0e0e0)),
       ),
       minX: 0,
-      maxX: weeklyUsageData.length.toDouble() - 1,
+      maxX: reversedData.length.toDouble() - 1,
       minY: 0,
       maxY: 20,
       lineBarsData: [
         LineChartBarData(
-          spots: weeklyUsageData.asMap().entries.map((entry) {
-            return FlSpot(entry.key.toDouble(), entry.value.reUsage);
+          spots: reversedData.asMap().entries.map((entry) {
+            double reUsage = entry.value.reUsage.isNaN ? 0 : entry.value.reUsage;
+            return FlSpot(entry.key.toDouble(), reUsage);
           }).toList(),
           isCurved: true,
           gradient: LinearGradient(
@@ -186,8 +190,9 @@ class LineChartSample extends StatelessWidget {
           dotData: const FlDotData(show: false),
         ),
         LineChartBarData(
-          spots: weeklyUsageData.asMap().entries.map((entry) {
-            return FlSpot(entry.key.toDouble(), entry.value.plnUsage);
+          spots: reversedData.asMap().entries.map((entry) {
+            double plnUsage = entry.value.plnUsage.isNaN ? 0 : entry.value.plnUsage;
+            return FlSpot(entry.key.toDouble(), plnUsage);
           }).toList(),
           isCurved: true,
           gradient: const LinearGradient(
@@ -225,4 +230,6 @@ class LegendItem extends StatelessWidget {
       ],
     );
   }
+
+  
 }

@@ -19,6 +19,7 @@ import 'Provider/weekly_usage_provider.dart';
 import 'Provider/wheater_provider.dart';
 import 'Services/fcm_service.dart';
 import 'View/Home.dart';
+import 'View/SplashScreen.dart';
 import 'firebase_options.dart';
 
 // Tambahkan import untuk Firebase Analytics
@@ -130,34 +131,10 @@ class MyApp extends StatelessWidget {
             home: child,
           );
         },
-        child: const Login(),
+        child: const SplashScreen(),
       ),
     );
   }
 
   
-}
-
-
-class AuthCheck extends StatelessWidget {
-  const AuthCheck({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<UserProvider>(context);
-    return FutureBuilder(
-      future: authProvider.isLoggedIn(), // Metode untuk memeriksa status login
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator(); // Tampilkan loading saat menunggu
-        } else {
-          if (snapshot.data == true) {
-            return const Home(); // Ganti dengan halaman utama Anda
-          } else {
-            return const Login();
-          }
-        }
-      },
-    );
-  }
 }

@@ -61,10 +61,8 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
-    final auth = Provider.of<AuthProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final notifPovider =
-        Provider.of<NotificationProvider>(context, listen: false);
+    Provider.of<NotificationProvider>(context, listen: false);
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -74,7 +72,14 @@ class _LoginState extends State<Login> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              height: 70.h,
+              height: 10.h,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Image.asset(
+                'assets/images/logo-albitec-small.png',
+                fit: BoxFit.cover,
+              ),
             ),
             Align(
               alignment: Alignment.topCenter,
@@ -148,8 +153,8 @@ class _LoginState extends State<Login> {
               if (success) {
                 _showSuccessMessage(
                     context, "Login berhasil!"); // Tampilkan pesan berhasil
-                await userProvider.loadUserData(authProvider.user!.uid);
-                
+                await userProvider.loadUserData();
+
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => const Home()),
@@ -211,8 +216,8 @@ class _LoginState extends State<Login> {
               Navigator.of(context).pop(); // Tutup dialog loading
 
               if (authProvider.user != null) {
-                await userProvider.loadUserData(authProvider.user!.uid);
-                
+                await userProvider.loadUserData();
+
                 _showSuccessMessage(context,
                     "Login Google berhasil!"); // Tampilkan pesan berhasil
                 Navigator.pushReplacement(
@@ -270,11 +275,10 @@ class _LoginState extends State<Login> {
             ),
             TextButton(
                 onPressed: () async {
-                        Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LupaPass()));
-              
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LupaPass()));
                 },
                 child: Text(
                   "Lupa password?",

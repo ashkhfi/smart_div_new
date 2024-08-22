@@ -105,7 +105,7 @@ class _LupaPassState extends State<LupaPass> {
             if (emailController.text.isNotEmpty) {
               await authProvider.resetPassword(emailController.text);
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Password reset link sent!')),
+                const SnackBar(content: Text('Password Reset link Terkirim!')),
               );
             }
           }),

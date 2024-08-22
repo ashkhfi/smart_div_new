@@ -5,7 +5,6 @@ import '../Models/weekly_usage_model.dart';
 
 class WeeklyUsageService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  // Mendapatkan data dari koleksi weekly_usage dengan paginasi
   Future<Map<String, dynamic>> getAllDataPagination({
     required int page,
     required int limit,
@@ -16,10 +15,14 @@ class WeeklyUsageService {
       final totalCountSnapshot = await _db.collection('weekly_usage').get();
       final totalDocuments = totalCountSnapshot.size;
       final totalPages = (totalDocuments / limit).ceil();
+      // print('pages : ${totalPages}');
+      // print('limit : ${limit}');
+      // print('doc : ${totalDocuments}');
 
-      Query query = _db.collection('weekly_usage')
-                        .orderBy('date', descending: true)
-                        .limit(limit);
+      Query query = _db
+          .collection('weekly_usage')
+          .orderBy('date', descending: true)
+          .limit(limit);
 
       if (startAfter != null) {
         query = query.startAfterDocument(startAfter);
@@ -48,9 +51,13 @@ class WeeklyUsageService {
     }
   }
 
-  Future<List<WeeklyUsage>> getAllData({required int page}) async {
+  Future<List<WeeklyUsage>> getAllData() async {
     try {
-      final snapshot = await _db.collection('weekly_usage').get();
+      final snapshot = await _db
+          .collection('weekly_usage')
+          .limit(30)
+          .orderBy('date', descending: true)
+          .get();
 
       if (snapshot.docs.isEmpty) {
         return [];
@@ -92,15 +99,19 @@ class WeeklyUsageService {
 
   Future<double> getTotalPLNUsageLast7Days() async {
     final usages = await getWeeklyData();
-    final totalPLNUsage =
-        usages.fold<double>(0.0, (sum, usage) => sum + usage.plnUsage);
+    final totalPLNUsage = usages.fold<double>(0.0, (sum, usage) {
+      double plnUsage = usage.plnUsage.isNaN ? 0.0 : usage.plnUsage;
+      return sum + plnUsage;
+    });
     return totalPLNUsage;
   }
 
   Future<double> getTotalREusageLast7Days() async {
     final usages = await getWeeklyData();
-    final totalREUsage =
-        usages.fold<double>(0.0, (sum, usage) => sum + usage.reUsage);
+    final totalREUsage = usages.fold<double>(0.0, (sum, usage) {
+      double reUsage = usage.reUsage.isNaN ? 0.0 : usage.reUsage;
+      return sum + reUsage;
+    });
     return totalREUsage;
   }
 }

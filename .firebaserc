@@ -1,5 +1,12 @@
 {
   "projects": {
     "default": "smartgridv2"
-  }
+  },
+  "targets": {},
+  "etags": {
+    "smartgridv2": {
+      "extensionInstances": {}
+    }
+  },
+  "dataconnectEmulatorConfig": {}
 }

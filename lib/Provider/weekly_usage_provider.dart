@@ -7,15 +7,17 @@ class WeeklyUsageProvider with ChangeNotifier {
   final WeeklyUsageService _service = WeeklyUsageService();
 
   List<WeeklyUsage> _weeklyUsages = [];
+  List<WeeklyUsage> _allweeklyUsages = [];
   bool _isLoading = false;
   String? _errorMessage;
   bool _hasNextPage = true;
   bool _hasPreviousPage = false;
   DocumentSnapshot? _lastDocument;
-  int _currentPage = 0; 
-  int _totalPages = 0; 
-
+  int _currentPage = 0;
+  int _totalPages = 0;
+  int limit = 7;
   List<WeeklyUsage> get weeklyUsages => _weeklyUsages;
+  List<WeeklyUsage> get allweeklyUsages => _allweeklyUsages;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get hasNextPage => _hasNextPage;
@@ -23,18 +25,37 @@ class WeeklyUsageProvider with ChangeNotifier {
   int get currentPage => _currentPage;
   int get totalPages => _totalPages;
 
+  WeeklyUsageProvider() {
+    getAllData();
+  }
+
+  Future<void> getAllData() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _allweeklyUsages = await _service.getAllData();
+    } catch (e) {
+      _errorMessage = 'Error fetching data: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> fetchFirstPage() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      final result = await _service.getAllDataPagination(page: 1, limit: 10);
+      final result = await _service.getAllDataPagination(page: 1, limit: limit);
       _weeklyUsages = result['data'] as List<WeeklyUsage>;
       _hasNextPage = result['hasMore'] as bool;
-      _hasPreviousPage = false; // Tidak ada halaman sebelumnya saat di halaman pertama
+      _hasPreviousPage = false;
       _lastDocument = result['lastDocument'] as DocumentSnapshot?;
-      _currentPage = 1; // Set halaman saat ini ke 1
+      _currentPage = 1;
       _totalPages = result['totalPages'] as int; // Set total halaman
+      print(
+          "Current Page: $_currentPage, Data Count: ${_weeklyUsages.length}, Has Next Page: $_hasNextPage, Has Prev Page: $_hasPreviousPage");
     } catch (e) {
       _errorMessage = 'Error fetching data: $e';
     } finally {
@@ -46,24 +67,34 @@ class WeeklyUsageProvider with ChangeNotifier {
   Future<void> fetchNextPage() async {
     if (!_hasNextPage) return;
 
-    _isLoading = true;
+    // _isLoading = true;
     notifyListeners();
 
     try {
       final result = await _service.getAllDataPagination(
-        page: _currentPage + 1, 
-        limit: 10,
-        startAfter: _lastDocument,
+        page: _currentPage + 1,
+        limit: limit,
+        startAfter:
+            _lastDocument, // Mulai mengambil data setelah dokumen terakhir dari halaman sebelumnya
       );
-      _weeklyUsages.addAll(result['data'] as List<WeeklyUsage>);
+
+      final newData = result['data'] as List<WeeklyUsage>;
+      if (newData.isNotEmpty) {
+        _weeklyUsages.clear();
+        _weeklyUsages.addAll(newData); // Tambahkan data baru ke dalam list
+      }
+
       _hasNextPage = result['hasMore'] as bool;
-      _hasPreviousPage = _currentPage > 1; // Ada halaman sebelumnya jika currentPage > 1
+      _currentPage++; // Update halaman saat ini
+      _hasPreviousPage = _currentPage > 1;
       _lastDocument = result['lastDocument'] as DocumentSnapshot?;
-      _currentPage++; // Naikkan halaman saat ini
+
+      print(
+          "Current Page: $_currentPage, Data Count: ${_weeklyUsages.length}, Has Next Page: $_hasNextPage, Has Prev Page: $_hasPreviousPage");
     } catch (e) {
       _errorMessage = 'Error fetching data: $e';
     } finally {
-      _isLoading = false;
+      // _isLoading = false;
       notifyListeners();
     }
   }
@@ -71,24 +102,29 @@ class WeeklyUsageProvider with ChangeNotifier {
   Future<void> fetchPreviousPage() async {
     if (!_hasPreviousPage) return;
 
-    _isLoading = true;
+    // _isLoading = true;
     notifyListeners();
 
     try {
       final result = await _service.getAllDataPagination(
-        page: _currentPage - 1, 
-        limit: 10,
-        startAfter: null, // Implementasi untuk halaman sebelumnya perlu menyesuaikan cara penyimpanan state
+        page: _currentPage - 1,
+        limit: limit,
+        startAfter:
+            null, // Implementasi untuk halaman sebelumnya perlu menyesuaikan cara penyimpanan state
       );
       _weeklyUsages = result['data'] as List<WeeklyUsage>;
       _hasNextPage = true; // Bisa ada halaman berikutnya
-      _hasPreviousPage = _currentPage > 1; // Ada halaman sebelumnya jika currentPage > 1
-      _lastDocument = result['lastDocument'] as DocumentSnapshot?;
       _currentPage--; // Turunkan halaman saat ini
+      _hasPreviousPage =
+          _currentPage > 1; // Ada halaman sebelumnya jika currentPage > 1
+      _lastDocument = result['lastDocument'] as DocumentSnapshot?;
+
+      print(
+          "Current Page: $_currentPage, Data Count: ${_weeklyUsages.length}, Has Next Page: $_hasNextPage, Has Prev Page: $_hasPreviousPage");
     } catch (e) {
       _errorMessage = 'Error fetching data: $e';
     } finally {
-      _isLoading = false;
+      // _isLoading = false;
       notifyListeners();
     }
   }

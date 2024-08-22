@@ -4,24 +4,39 @@ import 'package:smart_div_new/Models/sensor_model.dart';
 class SensorService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  
-  Future<sensorModel?> getData() async {
+  // Mengambil data dari dokumen dengan ID tertentu secara real-time
+  Stream<sensorModel?> streamData() {
     try {
-      
-      final QuerySnapshot querySnapshot =
-          await _db.collection('sensors').get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-      
-        final doc = querySnapshot.docs.first;
-      
-        return sensorModel.fromJson(doc.data() as Map<String, dynamic>);
-      } else {
-        return null; // Koleksi kosong
-      }
+      // Mengambil data secara real-time dari dokumen dengan ID tertentu
+      return _db
+          .collection('sensors')
+          .doc('device1')
+          .snapshots()
+          .map((snapshot) {
+        if (snapshot.exists) {
+          return sensorModel.fromJson(snapshot.data() as Map<String, dynamic>);
+        } else {
+          return null; // Dokumen tidak ditemukan
+        }
+      });
     } catch (e) {
-      print('Error getting first document: $e');
-      return null; // Error atau dokumen tidak ditemukan
+      print('Error getting document stream: $e');
+      return Stream.value(
+          null); // Mengembalikan stream kosong jika terjadi error
+    }
+  }
+
+  Future<void> updateRelayStatus(
+      String commandAndroid) async {
+    try {
+      await _db.collection('sensors').doc('device1').update({
+        'commandAndroid': commandAndroid,
+      });
+    } catch (e) {
+      print('Failed to update relay status: $e');
+    } finally {
+      print(
+          'command status updated: command android - $commandAndroid');
     }
   }
 }

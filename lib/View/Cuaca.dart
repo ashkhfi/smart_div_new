@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_div_new/Provider/wheater_provider.dart';
+import 'package:weather_icons/weather_icons.dart';
 
 import '../Partials/Button/BackButton.dart';
 
@@ -18,10 +19,6 @@ class _CuacaState extends State<Cuaca> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<WeatherProvider>(context, listen: false);
-      provider.fetchWeather();
-    });
   }
 
   String translateWeatherDescription(String description) {
@@ -44,33 +41,63 @@ class _CuacaState extends State<Cuaca> {
         return 'Salju';
       case 'mist':
         return 'Kabut';
+      case 'smoke':
+        return 'Asap';
+      case 'haze':
+        return 'Kabut Asap';
+      case 'fog':
+        return 'Kabut';
+      case 'dust':
+      return 'Debu';
+      case 'sand':
+        return 'Pasir';
+      case 'ash':
+        return 'Abu';
+      case 'squall':
+        return 'Angin Kencang';
+      case 'tornado':
+        return 'Tornado';
       default:
-        return description; // Jika tidak ada terjemahan, gunakan deskripsi asli
+        return description;
     }
   }
 
   IconData translateWeatherIcon(String description) {
     switch (description.toLowerCase()) {
       case 'clear sky':
-        return Icons.wb_sunny;
+        return WeatherIcons.day_sunny;
       case 'few clouds':
-        return Icons.cloud;
+        return WeatherIcons.day_cloudy;
       case 'scattered clouds':
-        return Icons.cloud_queue;
+        return WeatherIcons.cloud;
       case 'broken clouds':
-        return Icons.cloud_off;
+        return WeatherIcons.cloudy;
       case 'shower rain':
-        return Icons.grain;
+        return WeatherIcons.showers;
       case 'rain':
-        return Icons.beach_access;
+        return WeatherIcons.rain;
       case 'thunderstorm':
-        return Icons.flash_on;
+        return WeatherIcons.thunderstorm;
       case 'snow':
-        return Icons.ac_unit;
+        return WeatherIcons.snow;
       case 'mist':
-        return Icons.blur_on;
+      case 'fog':
+        return WeatherIcons.fog;
+      case 'smoke':
+        return WeatherIcons.smoke;
+      case 'haze':
+        return WeatherIcons.day_haze;
+      case 'dust':
+      case 'sand':
+        return WeatherIcons.sandstorm;
+      case 'ash':
+        return WeatherIcons.volcano;
+      case 'squall':
+        return WeatherIcons.strong_wind;
+      case 'tornado':
+        return WeatherIcons.tornado;
       default:
-        return Icons.help; // Ikon default jika tidak ada yang cocok
+        return WeatherIcons.cloud;
     }
   }
 
@@ -93,15 +120,35 @@ class _CuacaState extends State<Cuaca> {
       case 'snow':
         return Colors.lightBlueAccent;
       case 'mist':
+      case 'fog':
+      case 'haze':
         return Colors.white70;
+      case 'smoke':
+        return Colors.brown;
+      case 'dust':
+      case 'sand':
+      case 'ash':
+        return Colors.orange;
+      case 'squall':
+        return Colors.teal;
+      case 'tornado':
+        return Colors.red;
       default:
-        return Colors.black; // Warna default jika tidak ada yang cocok
+        return Colors.grey;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<WeatherProvider>(context);
+    if (provider.weatherData == null) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(), // Menampilkan indikator loading
+        ),
+      );
+    }
+
     String currentDate =
         DateFormat('EEEE, dd MMMM yyyy', "id_ID").format(DateTime.now());
     String currentTime = DateFormat('HH:mm').format(DateTime.now());
@@ -111,188 +158,196 @@ class _CuacaState extends State<Cuaca> {
         translateWeatherIcon(provider.weatherData!.weather.description);
     Color weatherColor =
         translateWeatherColor(provider.weatherData!.weather.description);
+
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: 40.h,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+      body: Consumer<WeatherProvider>(
+        builder: (context, value, child) {
+          return Column(
             children: [
-              Padding(
-                padding: EdgeInsets.only(left: 20.w, right: 60.w),
-                child: KembaliButton(context, onTap: () {
-                  Navigator.pop(context);
-                }),
+              SizedBox(
+                height: 40.h,
               ),
-              Center(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Perkiraan Cuaca",
-                    style: TextStyle(
-                        fontFamily: "Lato",
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                ),
-              )
-            ],
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          Text("Kota Semarang",
-              style: TextStyle(
-                  fontFamily: "Lato",
-                  fontSize: 25.sp,
-                  fontWeight: FontWeight.bold,
-                  color: const Color.fromRGBO(0, 73, 124, 1))),
-          SizedBox(
-            height: 10.h,
-          ),
-          Text("${provider.weatherData?.main.temp.toStringAsFixed(0) ?? "0"} ℃",
-              style: TextStyle(
-                  fontFamily: "Lato",
-                  fontSize: 40.sp,
-                  fontWeight: FontWeight.bold,
-                  color: const Color.fromRGBO(0, 73, 124, 1))),
-          SizedBox(
-            height: 10.h,
-          ),
-          Text(weatherDescription,
-              style: TextStyle(
-                  fontFamily: "Lato",
-                  fontSize: 22.sp,
-                  fontWeight: FontWeight.normal,
-                  color: const Color.fromRGBO(0, 73, 124, 1))),
-          SizedBox(
-            height: 20.h,
-          ),
-          Text(currentDate,
-              style: TextStyle(
-                  fontFamily: "Lato",
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.normal,
-                  color: const Color.fromRGBO(0, 73, 124, 1))),
-          SizedBox(
-            height: 10.h,
-          ),
-          Text(currentTime,
-              style: TextStyle(
-                  fontFamily: "Lato",
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.normal,
-                  color: const Color.fromRGBO(0, 73, 124, 1))),
-          SizedBox(
-            height: 10.h,
-          ),
-          Icon(
-            weatherIcon,
-            color: weatherColor,
-            size: 200.dm,
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-          Container(
-            height: 90.h,
-            width: MediaQuery.of(context).size.width * 0.9,
-            decoration: BoxDecoration(
-                color: const Color.fromRGBO(2, 138, 234, 1),
-                borderRadius: BorderRadius.circular(10.dm)),
-            child: Padding(
-              padding: EdgeInsets.only(top: 5.h),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  //angin
-                  Column(
-                    children: [
-                      Text(
-                        "Angin",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "Lato",
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                      Icon(
-                        LucideIcons.wind,
-                        color: Colors.white,
-                        size: 30.dm,
-                      ),
-                      Text(
-                        "${provider.weatherData!.wind.speed.toString()} km/h",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "Lato",
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.only(left: 20.w, right: 60.w),
+                    child: KembaliButton(context, onTap: () {
+                      Navigator.pop(context);
+                    }),
                   ),
-
-                  //kelembaban
-                  Column(
-                    children: [
-                      Text(
-                        "Kelembaban",
+                  Center(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Perkiraan Cuaca",
                         style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "Lato",
-                          fontSize: 16.sp,
-                        ),
+                            fontFamily: "Lato",
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                       ),
-                      Icon(
-                        LucideIcons.droplet,
-                        color: Colors.white,
-                        size: 30.dm,
-                      ),
-                      Text(
-                        "${provider.weatherData!.main.humidity.toString()} %",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "Lato",
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  //kelembaban
-                  Column(
-                    children: [
-                      Text(
-                        "Suhu maks",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "Lato",
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                      Icon(
-                        LucideIcons.thermometerSun,
-                        color: Colors.white,
-                        size: 30.dm,
-                      ),
-                      Text(
-                     "${provider.weatherData!.main.tempMax.toStringAsFixed(0)} ℃",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "Lato",
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  )
                 ],
               ),
-            ),
-          ),
-        ],
+              SizedBox(
+                height: 20.h,
+              ),
+              Text("Kota Semarang",
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      fontSize: 25.sp,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromRGBO(0, 73, 124, 1))),
+              SizedBox(
+                height: 10.h,
+              ),
+              Text(
+                  "${provider.weatherData?.main.temp.toStringAsFixed(0) ?? "0"} ℃",
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      fontSize: 40.sp,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromRGBO(0, 73, 124, 1))),
+              SizedBox(
+                height: 10.h,
+              ),
+              Text(weatherDescription,
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.normal,
+                      color: const Color.fromRGBO(0, 73, 124, 1))),
+              SizedBox(
+                height: 20.h,
+              ),
+              Text(currentDate,
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.normal,
+                      color: const Color.fromRGBO(0, 73, 124, 1))),
+              SizedBox(
+                height: 10.h,
+              ),
+              Text(currentTime,
+                  style: TextStyle(
+                      fontFamily: "Lato",
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.normal,
+                      color: const Color.fromRGBO(0, 73, 124, 1))),
+              SizedBox(
+                height: 50.h,
+              ),
+              Center(
+                child: Icon(
+                  weatherIcon,
+                  color: weatherColor,
+                  size: 150.dm,
+                ),
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              Container(
+                height: 90.h,
+                width: MediaQuery.of(context).size.width * 0.9,
+                decoration: BoxDecoration(
+                    color: const Color.fromRGBO(2, 138, 234, 1),
+                    borderRadius: BorderRadius.circular(10.dm)),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 5.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      //angin
+                      Column(
+                        children: [
+                          Text(
+                            "Angin",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Lato",
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                          Icon(
+                            LucideIcons.wind,
+                            color: Colors.white,
+                            size: 30.dm,
+                          ),
+                          Text(
+                            "${provider.weatherData!.wind.speed.toString()} km/h",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Lato",
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      //kelembaban
+                      Column(
+                        children: [
+                          Text(
+                            "Kelembaban",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Lato",
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                          Icon(
+                            LucideIcons.droplet,
+                            color: Colors.white,
+                            size: 30.dm,
+                          ),
+                          Text(
+                            "${provider.weatherData!.main.humidity.toString()} %",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Lato",
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      //suhu maks
+                      Column(
+                        children: [
+                          Text(
+                            "Suhu maks",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Lato",
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                          Icon(
+                            LucideIcons.thermometerSun,
+                            color: Colors.white,
+                            size: 30.dm,
+                          ),
+                          Text(
+                            "${provider.weatherData!.main.tempMax.toStringAsFixed(0)} ℃",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Lato",
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

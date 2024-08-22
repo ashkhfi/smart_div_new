@@ -4,7 +4,7 @@
 
 
     <application
-        android:label="smart_div_new"
+        android:label="Smartgrid"
         android:icon="@mipmap/ic_launcher">
 
         <activity

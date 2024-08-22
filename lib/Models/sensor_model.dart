@@ -1,5 +1,5 @@
 class sensorModel {
-  double iBaterai;
+  String iBaterai;
   String iInverter;
   String iPln;
   String iPlts;
@@ -15,6 +15,7 @@ class sensorModel {
   String vrsPltb;
   String vstPltb;
   String vtrPltb;
+  String commandAndroid;
 
   sensorModel({
     required this.iBaterai,
@@ -33,9 +34,10 @@ class sensorModel {
     required this.vrsPltb,
     required this.vstPltb,
     required this.vtrPltb,
+    required this.commandAndroid,
   });
 
-  // Method to create a sensorModel instance from a JSON map
+  // Method to create a SensorModel instance from a JSON map
   factory sensorModel.fromJson(Map<String, dynamic> json) {
     return sensorModel(
       iBaterai: json['i_baterai'],
@@ -45,7 +47,7 @@ class sensorModel {
       irsPltb: json['irs_pltb'],
       istPltb: json['ist_pltb'],
       itrPltb: json['itr_pltb'],
-      modeAktif: json['mode_aktif'],
+      modeAktif: json['mode'],
       socBaterai: json['soc_baterai'],
       vBaterai: json['v_baterai'],
       vInverter: json['v_inverter'],
@@ -54,10 +56,11 @@ class sensorModel {
       vrsPltb: json['vrs_pltb'],
       vstPltb: json['vst_pltb'],
       vtrPltb: json['vtr_pltb'],
+      commandAndroid: json['commandAndroid'],
     );
   }
 
-  // Method to convert a sensorModel instance to a JSON map
+  // Method to convert a SensorModel instance to a JSON map
   Map<String, dynamic> toJson() {
     return {
       'i_baterai': iBaterai,
@@ -67,7 +70,7 @@ class sensorModel {
       'irs_pltb': irsPltb,
       'ist_pltb': istPltb,
       'itr_pltb': itrPltb,
-      'mode_aktif': modeAktif,
+      'mode': modeAktif,
       'soc_baterai': socBaterai,
       'v_baterai': vBaterai,
       'v_inverter': vInverter,
@@ -76,6 +79,7 @@ class sensorModel {
       'vrs_pltb': vrsPltb,
       'vst_pltb': vstPltb,
       'vtr_pltb': vtrPltb,
+      'commandAndroid': commandAndroid,
     };
   }
 }

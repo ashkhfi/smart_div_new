@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -5,6 +6,7 @@ class FCMService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin
       _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   FCMService() {
     _initializeNotifications();
@@ -125,5 +127,26 @@ class FCMService {
         NotificationDetails(android: androidNotificationDetails);
     await _flutterLocalNotificationsPlugin
         .show(0, title, body, notificationDetails, payload: payload);
+  }
+
+  Future<void> updateNotificationStatus(String userId, bool status) async {
+    try {
+      FirebaseFirestore.instance.collection('users').doc(userId).set({
+        'notif': status,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      throw Exception('Gagal mengupdate status notifikasi: $e');
+    }
+  }
+
+  // Mendapatkan status notifikasi dari Firestore
+  Future<bool> getNotificationStatus(String userId) async {
+    try {
+      DocumentSnapshot doc =
+          await _firestore.collection('users').doc(userId).get();
+      return doc['notif'] ?? false;
+    } catch (e) {
+      throw Exception('Gagal mendapatkan status notifikasi: $e');
+    }
   }
 }

@@ -63,8 +63,14 @@ class _ListPLNState extends State<ListPLN> {
                             child: Container(
                               height: 22.h,
                               decoration: BoxDecoration(
-                                  color: sensorProvider.sensor?.iPln == "0.0" &&
-                                          sensorProvider.sensor?.vPln == "0.0"
+                                  color: (sensorProvider.sensor?.iPln ==
+                                                  "0.00" &&
+                                              sensorProvider.sensor?.vPln ==
+                                                  "0.00") ||
+                                          (sensorProvider.sensor?.iPln ==
+                                                  " NAN" &&
+                                              sensorProvider.sensor?.vPln ==
+                                                  " NAN")
                                       // 231, 255, 245, 1
                                       ? const Color.fromRGBO(255, 231, 231, 1)
                                       : const Color.fromRGBO(231, 255, 245, 1),
@@ -77,17 +83,28 @@ class _ListPLNState extends State<ListPLN> {
                                     right: 5.dm),
                                 child: Center(
                                   child: Text(
-                                    sensorProvider.sensor?.iPln == "0.0" &&
-                                            sensorProvider.sensor?.vPln == "0.0"
+                                    (sensorProvider.sensor?.iPln == "0.00" &&
+                                                sensorProvider.sensor?.vPln ==
+                                                    "0.00") ||
+                                            (sensorProvider.sensor?.iPln ==
+                                                    " NAN" &&
+                                                sensorProvider.sensor?.vPln ==
+                                                    " NAN")
                                         ? "Inactive"
                                         : "Active",
                                     style: TextStyle(
                                         fontFamily: "Lato",
                                         fontSize: 14.sp,
                                         color: (sensorProvider.sensor?.iPln ==
-                                                    "0.0" &&
-                                                sensorProvider.sensor?.vPln ==
-                                                    "0.0")
+                                                        "0.00" &&
+                                                    sensorProvider
+                                                            .sensor?.vPln ==
+                                                        "0.00") ||
+                                                (sensorProvider.sensor?.iPln ==
+                                                        " NAN" &&
+                                                    sensorProvider
+                                                            .sensor?.vPln ==
+                                                        " NAN")
 
                                             //  255, 67, 67, 1
                                             ? const Color.fromRGBO(
@@ -116,7 +133,7 @@ class _ListPLNState extends State<ListPLN> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             Text(
-                              "V = ${sensorProvider.sensor?.vBaterai ?? 0.0}v",
+                              "V = ${sensorProvider.sensor?.vPln ?? 0.00}v",
                               style: TextStyle(
                                 fontFamily: "Lato",
                                 fontSize: 16.sp,
@@ -124,7 +141,7 @@ class _ListPLNState extends State<ListPLN> {
                               ),
                             ),
                             Text(
-                              "I = ${sensorProvider.sensor?.iBaterai ?? 0.0}A",
+                              "I = ${sensorProvider.sensor?.iPln ?? 0.00}A",
                               style: TextStyle(
                                 fontFamily: "Lato",
                                 fontSize: 16.sp,

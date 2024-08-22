@@ -33,8 +33,12 @@ class AuthService {
     }
   }
 
-  User? getCurrentUser() {
-    return _auth.currentUser;
+  Future<String?> getCurrentUser() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      return user.uid;
+    }
+    return "";
   }
 
   // Method untuk sign up dengan email dan password

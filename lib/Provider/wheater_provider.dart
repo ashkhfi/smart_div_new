@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+
 import '../Models/wheater_model.dart';
-import '../Services/wheater_service.dart';
+import '../Services/wheater_service.dart'; // Ganti dengan path ke model Anda
 
 class WeatherProvider with ChangeNotifier {
+  final WeatherService _weatherService = WeatherService();
   WeatherDataModel? _weatherData;
   bool _isLoading = false;
   String? _errorMessage;
@@ -11,22 +14,26 @@ class WeatherProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  final WeatherService _weatherService = WeatherService();
+  WeatherProvider() {
+    _startFetchingWeather();
+  }
 
-  Future<void> fetchWeather() async {
+  void _startFetchingWeather() async{
+    
+      await fetchWeatherData();
+    
+  }
+
+  Future<void> fetchWeatherData() async {
     _isLoading = true;
-    _errorMessage = null;
     notifyListeners();
 
     try {
       final data = await _weatherService.fetchWeatherData();
-      if (data != null) {
-        _weatherData = data;
-      } else {
-        _errorMessage = 'Failed to load weather data';
-      }
+      _weatherData = data;
+      _errorMessage = null;
     } catch (e) {
-      _errorMessage = 'Error: $e';
+      _errorMessage = e.toString();
     } finally {
       _isLoading = false;
       notifyListeners();

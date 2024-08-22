@@ -24,6 +24,12 @@ class ExpenseProvider with ChangeNotifier {
       double plnUsage = await _usageService.getTotalPLNUsageLast7Days();
       double reUsage = await _usageService.getTotalREusageLast7Days();
 
+      // Tangani nilai NaN
+      plnUsage = plnUsage.isNaN ? 0 : plnUsage;
+      reUsage = reUsage.isNaN ? 0 : reUsage;
+      
+      print(plnUsage);
+      print(reUsage);
       // Calculate and set the variables
       thisWeekUsage = (plnUsage * 1699).toInt();
       normalUsage = ((plnUsage + reUsage) * 1699).toInt();
@@ -33,7 +39,7 @@ class ExpenseProvider with ChangeNotifier {
       double persentaseRE = (reUsage / totalPenggunaan) * 100;
       double persentasePLN = (plnUsage / totalPenggunaan) * 100;
       percentage = (persentaseRE + persentasePLN) / 2;
-      
+
       _errorMessage = null;
     } catch (e) {
       _errorMessage = 'Failed to load data';

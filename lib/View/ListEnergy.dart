@@ -22,7 +22,7 @@ class _ListEnergyState extends State<ListEnergy> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              height: 120.h,
+              height: 140.h,
               width: MediaQuery.of(context).size.width * 0.8,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -64,10 +64,14 @@ class _ListEnergyState extends State<ListEnergy> {
                             child: Container(
                               height: 22.h,
                               decoration: BoxDecoration(
-                                  color: sensorProvider.sensor?.irsPltb ==
-                                              "0.00" &&
-                                          sensorProvider.sensor?.vrsPltb ==
-                                              "0.00"
+                                  color: (sensorProvider.sensor?.irsPltb ==
+                                                  "0.00" &&
+                                              sensorProvider.sensor?.vrsPltb ==
+                                                  "0.00") ||
+                                          (sensorProvider.sensor?.irsPltb ==
+                                                  " NAN" &&
+                                              sensorProvider.sensor?.vrsPltb ==
+                                                  " NAN")
                                       // 231, 255, 245, 1
                                       ? const Color.fromRGBO(255, 231, 231, 1)
                                       : const Color.fromRGBO(231, 255, 245, 1),
@@ -80,9 +84,15 @@ class _ListEnergyState extends State<ListEnergy> {
                                     right: 5.dm),
                                 child: Center(
                                   child: Text(
-                                    sensorProvider.sensor?.irsPltb == "0.00" &&
-                                            sensorProvider.sensor?.vrsPltb ==
-                                                "0.00"
+                                    (sensorProvider.sensor?.irsPltb == "0.00" &&
+                                                sensorProvider
+                                                        .sensor?.vrsPltb ==
+                                                    "0.00") ||
+                                            (sensorProvider.sensor?.irsPltb ==
+                                                    " NAN" &&
+                                                sensorProvider
+                                                        .sensor?.vrsPltb ==
+                                                    " NAN")
                                         ? "Inactive"
                                         : "Active",
                                     style: TextStyle(
@@ -90,10 +100,16 @@ class _ListEnergyState extends State<ListEnergy> {
                                         fontSize: 14.sp,
                                         color:
                                             (sensorProvider.sensor?.irsPltb ==
-                                                        "0.00" &&
-                                                    sensorProvider
-                                                            .sensor?.vrsPltb ==
-                                                        "0.00")
+                                                            "0.00" &&
+                                                        sensorProvider.sensor
+                                                                ?.vrsPltb ==
+                                                            "0.00") ||
+                                                    (sensorProvider.sensor
+                                                                ?.irsPltb ==
+                                                            " NAN" &&
+                                                        sensorProvider.sensor
+                                                                ?.vrsPltb ==
+                                                            " NAN")
 
                                                 //  255, 67, 67, 1
                                                 ? const Color.fromRGBO(
@@ -231,9 +247,14 @@ class _ListEnergyState extends State<ListEnergy> {
                             child: Container(
                               height: 22.h,
                               decoration: BoxDecoration(
-                                  color: sensorProvider.sensor?.iPlts ==
-                                              "0.00" &&
-                                          sensorProvider.sensor?.vPlts == "0.00"
+                                  color: (sensorProvider.sensor?.iPlts ==
+                                                  "0.00" &&
+                                              sensorProvider.sensor?.vPlts ==
+                                                  "0.00") ||
+                                          (sensorProvider.sensor?.iPlts ==
+                                                  " NAN" &&
+                                              sensorProvider.sensor?.vPlts ==
+                                                  " NAN")
                                       // 231, 255, 245, 1
                                       ? const Color.fromRGBO(255, 231, 231, 1)
                                       : const Color.fromRGBO(231, 255, 245, 1),
@@ -246,18 +267,28 @@ class _ListEnergyState extends State<ListEnergy> {
                                     right: 5.dm),
                                 child: Center(
                                   child: Text(
-                                    sensorProvider.sensor?.iPlts == "0.00" &&
-                                            sensorProvider.sensor?.vPlts ==
-                                                "0.00"
+                                    (sensorProvider.sensor?.iPlts == "0.00" &&
+                                                sensorProvider.sensor?.vPlts ==
+                                                    "0.00") ||
+                                            (sensorProvider.sensor?.iPlts ==
+                                                    " NAN" &&
+                                                sensorProvider.sensor?.vPlts ==
+                                                    " NAN")
                                         ? "Inactive"
                                         : "Active",
                                     style: TextStyle(
                                         fontFamily: "Lato",
                                         fontSize: 14.sp,
                                         color: (sensorProvider.sensor?.iPlts ==
-                                                    "0.00" &&
-                                                sensorProvider.sensor?.vPlts ==
-                                                    "0.00")
+                                                        "0.00" &&
+                                                    sensorProvider
+                                                            .sensor?.vPlts ==
+                                                        "0.00") ||
+                                                (sensorProvider.sensor?.iPlts ==
+                                                        " NAN" &&
+                                                    sensorProvider
+                                                            .sensor?.vPlts ==
+                                                        " NAN")
 
                                             //  255, 67, 67, 1
                                             ? const Color.fromRGBO(
@@ -359,10 +390,16 @@ class _ListEnergyState extends State<ListEnergy> {
                             child: Container(
                               height: 22.h,
                               decoration: BoxDecoration(
-                                  color: sensorProvider.sensor?.iInverter ==
-                                              "0.00" &&
-                                          sensorProvider.sensor?.vInverter ==
-                                              "0.00"
+                                  color: (sensorProvider.sensor?.iInverter ==
+                                                  "0.00" &&
+                                              sensorProvider
+                                                      .sensor?.vInverter ==
+                                                  "0.00") ||
+                                          (sensorProvider.sensor?.iInverter ==
+                                                  " NAN" &&
+                                              sensorProvider
+                                                      .sensor?.vInverter ==
+                                                  " NAN")
                                       // 231, 255, 245, 1
                                       ? const Color.fromRGBO(255, 231, 231, 1)
                                       : const Color.fromRGBO(231, 255, 245, 1),
@@ -375,9 +412,16 @@ class _ListEnergyState extends State<ListEnergy> {
                                     right: 5.dm),
                                 child: Center(
                                   child: Text(
-                                    sensorProvider.sensor?.iInverter == "0.00" &&
-                                            sensorProvider.sensor?.vInverter ==
-                                                "0.00"
+                                    (sensorProvider.sensor?.iInverter ==
+                                                    "0.00" &&
+                                                sensorProvider
+                                                        .sensor?.vInverter ==
+                                                    "0.00") ||
+                                            (sensorProvider.sensor?.iInverter ==
+                                                    " NAN" &&
+                                                sensorProvider
+                                                        .sensor?.vInverter ==
+                                                    " NAN")
                                         ? "Inactive"
                                         : "Active",
                                     style: TextStyle(
@@ -385,10 +429,16 @@ class _ListEnergyState extends State<ListEnergy> {
                                         fontSize: 14.sp,
                                         color:
                                             (sensorProvider.sensor?.iInverter ==
-                                                        "0.00" &&
-                                                    sensorProvider.sensor
-                                                            ?.vInverter ==
-                                                        "0.00")
+                                                            "0.00" &&
+                                                        sensorProvider.sensor
+                                                                ?.vInverter ==
+                                                            "0.00") ||
+                                                    (sensorProvider.sensor
+                                                                ?.iInverter ==
+                                                            " NAN" &&
+                                                        sensorProvider.sensor
+                                                                ?.vInverter ==
+                                                            " NAN")
 
                                                 //  255, 67, 67, 1
                                                 ? const Color.fromRGBO(
@@ -448,7 +498,7 @@ class _ListEnergyState extends State<ListEnergy> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              height: 110.h,
+              height: 125.h,
               width: MediaQuery.of(context).size.width * 0.8,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -490,10 +540,14 @@ class _ListEnergyState extends State<ListEnergy> {
                             child: Container(
                               height: 22.h,
                               decoration: BoxDecoration(
-                                  color: sensorProvider.sensor?.iBaterai ==
-                                              "0.00" &&
-                                          sensorProvider.sensor?.vBaterai ==
-                                              "0.00"
+                                  color: (sensorProvider.sensor?.iBaterai ==
+                                                  "0.00" &&
+                                              sensorProvider.sensor?.vBaterai ==
+                                                  "0.00") ||
+                                          (sensorProvider.sensor?.iBaterai ==
+                                                  " NAN" &&
+                                              sensorProvider.sensor?.vBaterai ==
+                                                  " NAN")
                                       // 231, 255, 245, 1
                                       ? const Color.fromRGBO(255, 231, 231, 1)
                                       : const Color.fromRGBO(231, 255, 245, 1),
@@ -506,9 +560,16 @@ class _ListEnergyState extends State<ListEnergy> {
                                     right: 5.dm),
                                 child: Center(
                                   child: Text(
-                                    sensorProvider.sensor?.iBaterai == "0.00" &&
-                                            sensorProvider.sensor?.vBaterai ==
-                                                "0.00"
+                                    (sensorProvider.sensor?.iBaterai ==
+                                                    "0.00" &&
+                                                sensorProvider
+                                                        .sensor?.vBaterai ==
+                                                    "0.00") ||
+                                            (sensorProvider.sensor?.iBaterai ==
+                                                    " NAN" &&
+                                                sensorProvider
+                                                        .sensor?.vBaterai ==
+                                                    " NAN")
                                         ? "Inactive"
                                         : "Active",
                                     style: TextStyle(
@@ -516,10 +577,16 @@ class _ListEnergyState extends State<ListEnergy> {
                                         fontSize: 14.sp,
                                         color:
                                             (sensorProvider.sensor?.iBaterai ==
-                                                        "0.00" &&
-                                                    sensorProvider
-                                                            .sensor?.vBaterai ==
-                                                        "0.00")
+                                                            "0.00" &&
+                                                        sensorProvider.sensor
+                                                                ?.vBaterai ==
+                                                            "0.00") ||
+                                                    (sensorProvider.sensor
+                                                                ?.iBaterai ==
+                                                            " NAN" &&
+                                                        sensorProvider.sensor
+                                                                ?.vBaterai ==
+                                                            " NAN")
 
                                                 //  255, 67, 67, 1
                                                 ? const Color.fromRGBO(

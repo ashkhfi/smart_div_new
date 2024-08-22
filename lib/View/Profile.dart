@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,33 +25,39 @@ class _ProfileState extends State<Profile> {
   String? name;
   String? jabatan;
   String? telepon;
-  String? image;
+  String? image = null;
 
   Future<void> _pickImage(BuildContext context) async {
     final ImagePicker picker = ImagePicker();
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final XFile? imagea = await picker.pickImage(source: ImageSource.gallery);
     String userId = context.read<UserProvider>().userData!.uid;
-   
+
     if (imagea != null) {
       image = await userProvider.uploadImage(userId, imagea);
+      print(image);
+      setState(() {});
     }
   }
-
-
 
   void _submitForm() async {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save();
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       await userProvider.updateUser(userProvider.userData!.uid, {
-        "image": image,
-        "name": name,
-        "jabatan": jabatan,
-        "telepon": telepon,
+        "image": image ?? userProvider.userData!.image,
+        "name": name ?? userProvider.userData!.name,
+        "jabatan": jabatan ?? userProvider.userData!.jabatan,
+        "telepon": telepon ?? userProvider.userData!.telepon,
       });
-
-      await userProvider.loadUserData(userProvider.userData!.uid);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Berhasil Update Data"),
+          backgroundColor: Colors.green,
+        ),
+      );
+      await userProvider.loadUserData();
+      Navigator.pop(context);
     }
   }
 
@@ -58,7 +65,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     emailController.text = userProvider.userData?.email ?? "__";
-    nameController.text = userProvider.userData?.name ?? "__";
+    nameController.text = userProvider.userData?.name ?? "xxxxx";
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -105,12 +112,15 @@ class _ProfileState extends State<Profile> {
                     return CircleAvatar(
                       radius: 70.dm,
                       backgroundColor: Colors.white,
-                      backgroundImage: userProvider.userData?.image != null
-                          ? NetworkImage(userProvider.userData!.image!)
-                          : null,
-                      child: userProvider.userData?.image == null
-                          ? Icon(Icons.person, size: 50.dm, color: Colors.grey)
-                          : null,
+                      backgroundImage: image != null && image!.isNotEmpty
+                          ? CachedNetworkImageProvider(
+                              image!,
+                              cacheKey: image!,
+                            )
+                          : CachedNetworkImageProvider(
+                              userProvider.userData?.image ?? "",
+                              cacheKey: userProvider.userData?.image ?? "",
+                            ),
                     );
                   },
                 ),
@@ -186,6 +196,7 @@ class _ProfileState extends State<Profile> {
                 height: 10.h,
               ),
               // field jabatan
+
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,9 +236,8 @@ class _ProfileState extends State<Profile> {
 
                       onSaved: (newValue) {
                         // Simpan nilai ke model atau provider
-                                          if (newValue != null) {
-                              jabatan = newValue;
-
+                        if (newValue != null) {
+                          jabatan = newValue;
                         }
                       },
                     ),
@@ -271,11 +281,14 @@ class _ProfileState extends State<Profile> {
                       onSaved: (newValue) {
                         // Simpan nilai ke model atau provider
                         if (newValue != null) {
-                              newValue = telepon;
+                          telepon = newValue;
+                          print(telepon ?? "");
                         }
                       },
                     ),
                   ),
+                  // Text(telepon ?? "p"),
+                  // Text(jabatan ?? "p"),
                 ],
               ),
               SizedBox(

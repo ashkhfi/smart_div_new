@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +19,7 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ExpenseProvider>(context, listen: false).loadData();
     });
   }
@@ -33,6 +32,11 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
 
     double percentageFix =
         double.parse(percentage.replaceAll(RegExp(r'[^0-9]'), ''));
+
+    print("persen = ${percentageFix}");
+    print("normal = ${expenseProvider.normalUsage}");
+    print("this week = ${expenseProvider.thisWeekUsage}");
+    print("hemat = ${expenseProvider.savings}");
     return Scaffold(
       body: Stack(children: [
         Column(
@@ -80,8 +84,8 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
             ),
             PercentBar(context,
                 percent: percentageFix / 100,
-                money: formatCurrency(
-                    expenseProvider.savings?.toDouble() ?? 0.0)),
+                money:
+                    formatCurrency(expenseProvider.savings?.toDouble() ?? 0.0)),
             SizedBox(
               height: 20.h,
             ),

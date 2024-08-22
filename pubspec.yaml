@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   animated_custom_dropdown: ^3.1.1
+  cached_network_image: ^3.3.1
   camera: ^0.11.0+2
   carousel_slider: ^5.0.0
   cloud_firestore: ^4.14.0
@@ -43,6 +44,7 @@ dependencies:
   fl_chart: ^0.68.0
   flutter:
     sdk: flutter
+  flutter_cache_manager: ^3.4.1
   flutter_dotenv: ^5.1.0
   flutter_launcher_icons: ^0.13.1
   flutter_local_notifications: ^17.2.2
@@ -62,9 +64,10 @@ dependencies:
   permission_handler: ^11.3.1
   pie_chart: ^5.4.0
   provider: ^6.1.2
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.3.2
   timelines: ^0.1.0
   weather: ^3.1.1
+  weather_icons: ^3.0.0
 
 dev_dependencies:
   build_runner: ^2.4.12
@@ -83,6 +86,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png"
+  min_sdk_android: 21
+
 flutter:
 
   # The following line ensures that the Material Icons font is
