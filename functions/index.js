@@ -20,13 +20,8 @@ exports.scheduledDataProcessing = functions.pubsub
       for (const doc of snapshot.docs) {
         const data = doc.data();
 
-        const i_pln = parseFloat(data.i_pln);
-        const v_inverter = parseFloat(data.v_inverter);
-        const i_inverter = parseFloat(data.i_inverter);
-        const v_pln = parseFloat(data.v_pln);
-
-        const re_usage = (v_inverter * i_inverter) / 1000;
-        const pln_usage = (v_pln * i_pln) / 1000;
+        const re_usage = parseFloat(data.re_usage);
+        const pln_usage = parseFloat(data.pln_usage);
 
         // Mendapatkan waktu saat ini
         const currentTime = new Date();
@@ -48,7 +43,7 @@ exports.scheduledDataProcessing = functions.pubsub
   });
 
 exports.sendNotification = functions.firestore
-  .document("sensors/device1") // Ganti dengan ID dokumen yang diinginkan
+  .document("sensors/device1") 
   .onUpdate(async (change, context) => {
     const newValue = change.after.data();
     const previousValue = change.before.data();

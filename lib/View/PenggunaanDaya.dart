@@ -129,18 +129,12 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
                                     return parsed ?? defaultValue;
                                   }
 
-                                  double vInverter = parseDouble(sensorProvider
-                                      .sensor?.vInverter as String?);
-                                  double iInverter = parseDouble(sensorProvider
-                                      .sensor?.iInverter as String?);
-                                  double vPln = parseDouble(
-                                      sensorProvider.sensor?.vPln as String?);
-                                  double iPln = parseDouble(
-                                      sensorProvider.sensor?.iPln as String?);
+                              
 
-                                  double reUsage =
-                                      (vInverter * iInverter) / 1000;
-                                  double plnUsage = (vPln * iPln) / 1000;
+double reUsage = double.tryParse(sensorProvider.sensor!.reUsage) ?? 0.0;
+double plnUsage = double.tryParse(sensorProvider.sensor!.plnUsage) ?? 0.0;
+
+String pencentage = "${(plnUsage != 0) ? ((reUsage / plnUsage) * 100) : 0}%";
 
 
                                   return Column(
@@ -162,7 +156,7 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
                                                 fontFamily: "Lato"),
                                           ),
                                           Text(
-                                            "${reUsage.toStringAsFixed(2)} Kwh",
+                                            "$reUsage Kwh",
                                             style: TextStyle(
                                                 color: const Color.fromRGBO(
                                                     0, 73, 124, 1),
@@ -189,7 +183,7 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
                                                 fontFamily: "Lato"),
                                           ),
                                           Text(
-                                            "${plnUsage.toStringAsFixed(2)} Kwh",
+                                            "$plnUsage Kwh",
                                             style: TextStyle(
                                                 color: const Color.fromRGBO(
                                                     0, 73, 124, 1),
@@ -216,7 +210,9 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
                                                 fontFamily: "Lato"),
                                           ),
                                           Text(
-                                            "${(reUsage / plnUsage * 100).toStringAsFixed(2)}%",
+                                          "$pencentage",
+
+
                                             style: TextStyle(
                                                 color: const Color.fromRGBO(
                                                     0, 73, 124, 1),

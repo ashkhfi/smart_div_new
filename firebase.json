@@ -30,6 +30,28 @@
         "firebase-debug.*.log",
         "*.local"
       ]
+    },
+    {
+      "source": "weakly",
+      "codebase": "weakly",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    },
+    {
+      "source": "funct",
+      "codebase": "funct",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
     }
   ]
 }

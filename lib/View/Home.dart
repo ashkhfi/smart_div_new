@@ -11,7 +11,6 @@ import 'package:smart_div_new/View/PenggunaanDaya.dart';
 
 import '../Partials/Card/CardMode.dart';
 import '../Partials/Card/DashboardCard.dart';
-import 'Control.dart';
 import 'Kontrol_Daya.dart';
 import 'ListEnergy.dart';
 import 'ListPLN.dart';
@@ -109,7 +108,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     height: 20.h,
                   ),
                   CardMode(
-                    mode: sensorProvider.sensor?.modeAktif ?? "__",
+                    mode: sensorProvider.sensor?.mode ?? "__",
                     onRefresh: () async {
                       sensorProvider.getDataSensor();
                     },

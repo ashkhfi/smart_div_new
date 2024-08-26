@@ -6,9 +6,6 @@ import '../../Provider/sensor_provider.dart';
 
 Widget SplitCard(BuildContext context) {
      final sensorProvider = Provider.of<SensorProvider>(context);
-    bool baterai = sensorProvider.sensor!.commandAndroid == "true"
-        ? true
-        : false;
   return Container(
     width: MediaQuery.of(context).size.width * 0.9,
     height: 120.h,
@@ -41,7 +38,7 @@ Widget SplitCard(BuildContext context) {
             Padding(
               padding: EdgeInsets.only(right:10.w),
               child: Text(
-                sensorProvider.sensor?.modeAktif ?? "-",
+                sensorProvider.sensor?.mode ?? "-",
                 style: TextStyle(
                     color: Color.fromRGBO(0, 73, 124, 1),
                     fontFamily: "Lato",
@@ -74,7 +71,7 @@ Widget SplitCard(BuildContext context) {
             Padding(
               padding: EdgeInsets.only(right:10.w),
               child: Text(
-                baterai ? "Baterai" : "PLN",
+                sensorProvider.sensor?.sumber ?? "",
                 style: TextStyle(
                     color: Color.fromRGBO(0, 73, 124, 1),
                     fontFamily: "Lato",

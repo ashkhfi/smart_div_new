@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:smart_div_new/Models/sensor_model.dart';
 import 'package:smart_div_new/Services/sensor_service.dart';
+
+import '../Models/sensor_model.dart';
 
 class SensorProvider with ChangeNotifier {
   final SensorService _sensorService = SensorService();
@@ -26,6 +27,7 @@ class SensorProvider with ChangeNotifier {
         _sensor = sensorData;
         _isLoading = false;
         _errorMessage = null;
+        print("sumber : ${_sensor?.sumber}");
         notifyListeners();
       });
     } catch (e) {

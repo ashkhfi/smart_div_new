@@ -214,7 +214,7 @@ class _LoginState extends State<Login> {
 
               await authProvider.signInWithGoogle();
               Navigator.of(context).pop(); // Tutup dialog loading
-
+              print(authProvider.errorMessage);
               if (authProvider.user != null) {
                 await userProvider.loadUserData();
 

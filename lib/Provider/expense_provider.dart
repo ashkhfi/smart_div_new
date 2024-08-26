@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../Models/sensor_model.dart';
 import '../Services/weekly_usage_service.dart';
 
 class ExpenseProvider with ChangeNotifier {
@@ -9,25 +10,25 @@ class ExpenseProvider with ChangeNotifier {
   int? normalUsage;
   int? savings;
   double? percentage;
-
+  sensorModel? _sensor;
+  sensorModel? get sensor => _sensor;
   bool _isLoading = false;
   String? _errorMessage;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadData() async {
+  Future<void> loadData(double plnUsage, double reUsage) async {
     _isLoading = true;
     notifyListeners();
 
     try {
-      double plnUsage = await _usageService.getTotalPLNUsageLast7Days();
-      double reUsage = await _usageService.getTotalREusageLast7Days();
+   
 
       // Tangani nilai NaN
       plnUsage = plnUsage.isNaN ? 0 : plnUsage;
       reUsage = reUsage.isNaN ? 0 : reUsage;
-      
+
       print(plnUsage);
       print(reUsage);
       // Calculate and set the variables

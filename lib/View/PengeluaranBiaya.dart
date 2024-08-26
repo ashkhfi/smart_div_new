@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:smart_div_new/Provider/sensor_provider.dart';
 
 import '../Partials/Button/BackButton.dart';
 import '../Partials/Card/CardBiaya.dart';
@@ -16,27 +17,22 @@ class PengeluaranBiaya extends StatefulWidget {
 }
 
 class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ExpenseProvider>(context, listen: false).loadData();
-    });
-  }
+  double? thisWeekUsage;
+  double? normal;
+  double? saving;
 
   @override
   Widget build(BuildContext context) {
     // Menggunakan listen: true untuk mendapatkan perubahan data setiap kali provider di-update
     final expenseProvider = Provider.of<ExpenseProvider>(context);
+    // final sensorProvider = Provider.of<SensorProvider>(context);
     String percentage = formatCurrency(expenseProvider.percentage ?? 0.0);
-
+    // double? plnUsage = double.tryParse(sensorProvider.sensor?.reUsage ?? "0.0");
+    // // sensorProvider.sensor.pl
+    // print(plnUsage);
     double percentageFix =
         double.parse(percentage.replaceAll(RegExp(r'[^0-9]'), ''));
 
-    print("persen = ${percentageFix}");
-    print("normal = ${expenseProvider.normalUsage}");
-    print("this week = ${expenseProvider.thisWeekUsage}");
-    print("hemat = ${expenseProvider.savings}");
     return Scaffold(
       body: Stack(children: [
         Column(
@@ -82,10 +78,17 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
             SizedBox(
               height: 20.h,
             ),
-            PercentBar(context,
-                percent: percentageFix / 100,
-                money:
-                    formatCurrency(expenseProvider.savings?.toDouble() ?? 0.0)),
+            Consumer<SensorProvider>(
+              builder: (context, value, child) {
+                double? plnUsage = double.tryParse(value.sensor!.plnUsage);
+                double? reUsage = double.tryParse(value.sensor!.reUsage);
+                thisWeekUsage = (plnUsage! * 1699);
+                normal = ((plnUsage + reUsage!) * 1699);
+                return PercentBar(context,
+                    percent: (thisWeekUsage! / normal!) * 100,
+                    money: formatCurrency(normal! - thisWeekUsage!));
+              },
+            ),
             SizedBox(
               height: 20.h,
             ),
@@ -134,7 +137,7 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
                         context,
                         title: "Pengeluaran minggu ini",
                         total: formatCurrency(
-                            expenseProvider.thisWeekUsage?.toDouble() ?? 0.0),
+                            thisWeekUsage!),
                       ),
                     ),
                     SizedBox(
@@ -146,7 +149,7 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
                         context,
                         title: "Pengeluaran kondisi normal",
                         total: formatCurrency(
-                            expenseProvider.normalUsage?.toDouble() ?? 0.0),
+                            normal!),
                       ),
                     ),
                   ],
