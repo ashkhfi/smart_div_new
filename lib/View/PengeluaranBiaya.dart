@@ -17,8 +17,8 @@ class PengeluaranBiaya extends StatefulWidget {
 }
 
 class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
-  double? thisWeekUsage;
-  double? normal;
+  int? thisWeekUsage;
+  int? normal;
   double? saving;
 
   @override
@@ -29,10 +29,12 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
     String percentage = formatCurrency(expenseProvider.percentage ?? 0.0);
     // double? plnUsage = double.tryParse(sensorProvider.sensor?.reUsage ?? "0.0");
     // // sensorProvider.sensor.pl
+    // as
     // print(plnUsage);
     double percentageFix =
         double.parse(percentage.replaceAll(RegExp(r'[^0-9]'), ''));
-
+    thisWeekUsage = expenseProvider.thisWeekUsage ?? 0;
+    normal = expenseProvider.normalUsage ?? 0;
     return Scaffold(
       body: Stack(children: [
         Column(
@@ -78,17 +80,9 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
             SizedBox(
               height: 20.h,
             ),
-            Consumer<SensorProvider>(
-              builder: (context, value, child) {
-                double? plnUsage = double.tryParse(value.sensor!.plnUsage);
-                double? reUsage = double.tryParse(value.sensor!.reUsage);
-                thisWeekUsage = (plnUsage! * 1699);
-                normal = ((plnUsage + reUsage!) * 1699);
-                return PercentBar(context,
-                    percent: (thisWeekUsage! / normal!) * 100,
-                    money: formatCurrency(normal! - thisWeekUsage!));
-              },
-            ),
+            PercentBar(context,
+                percent: (thisWeekUsage! / normal!) * 100,
+                money: formatCurrency(normal!.toDouble() - thisWeekUsage!.toDouble())),
             SizedBox(
               height: 20.h,
             ),
@@ -109,6 +103,7 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
           ],
         ),
         DraggableScrollableSheet(
+            controller: DraggableScrollableController(),
             minChildSize: 0.4,
             maxChildSize: 0.5,
             initialChildSize: 0.4,
@@ -136,8 +131,7 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
                       child: CardBiaya(
                         context,
                         title: "Pengeluaran minggu ini",
-                        total: formatCurrency(
-                            thisWeekUsage!),
+                        total: formatCurrency(thisWeekUsage!.toDouble()),
                       ),
                     ),
                     SizedBox(
@@ -148,8 +142,7 @@ class _PengeluaranBiayaState extends State<PengeluaranBiaya> {
                       child: CardBiaya(
                         context,
                         title: "Pengeluaran kondisi normal",
-                        total: formatCurrency(
-                            normal!),
+                        total: formatCurrency(normal!.toDouble()),
                       ),
                     ),
                   ],

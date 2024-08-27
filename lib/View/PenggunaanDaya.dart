@@ -129,13 +129,19 @@ class _PenggunaandayaState extends State<Penggunaandaya> {
                                     return parsed ?? defaultValue;
                                   }
 
-                              
+                                  double reUsage = double.tryParse(
+                                          sensorProvider.sensor!.reUsage) ??
+                                      0.0;
+                                  double plnUsage = double.tryParse(
+                                          sensorProvider.sensor!.plnUsage) ??
+                                      0.0;
 
-double reUsage = double.tryParse(sensorProvider.sensor!.reUsage) ?? 0.0;
-double plnUsage = double.tryParse(sensorProvider.sensor!.plnUsage) ?? 0.0;
-
-String pencentage = "${(plnUsage != 0) ? ((reUsage / plnUsage) * 100) : 0}%";
-
+                                  String pencentage =
+                                      "${(plnUsage != 0) ? ((reUsage / plnUsage) * 100) : 0}%";
+                                  String percentageWithoutSymbol =
+                                      pencentage.replaceAll('%', '');
+                                  double percentageValue =
+                                      double.parse(percentageWithoutSymbol);
 
                                   return Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -210,9 +216,7 @@ String pencentage = "${(plnUsage != 0) ? ((reUsage / plnUsage) * 100) : 0}%";
                                                 fontFamily: "Lato"),
                                           ),
                                           Text(
-                                          "$pencentage",
-
-
+                                            "${percentageValue.toStringAsFixed(2)} %",
                                             style: TextStyle(
                                                 color: const Color.fromRGBO(
                                                     0, 73, 124, 1),
@@ -254,15 +258,13 @@ String pencentage = "${(plnUsage != 0) ? ((reUsage / plnUsage) * 100) : 0}%";
                                       ? () {
                                           usageProvider.fetchPreviousPage();
                                         }
-                                      : null, 
+                                      : null,
                                   icon: Icon(
                                     Icons.arrow_back_ios_new_outlined,
                                     size: 20,
                                     color: usageProvider.hasPreviousPage
-                                        ? const Color.fromRGBO(0, 73, 124,
-                                            1) 
-                                        : Colors
-                                            .grey, 
+                                        ? const Color.fromRGBO(0, 73, 124, 1)
+                                        : Colors.grey,
                                   ),
                                 ),
                                 Text(

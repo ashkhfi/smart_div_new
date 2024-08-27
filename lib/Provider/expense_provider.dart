@@ -18,19 +18,19 @@ class ExpenseProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadData(double plnUsage, double reUsage) async {
+  ExpenseProvider() {
+    loadData();
+  }
+
+  Future<void> loadData() async {
     _isLoading = true;
     notifyListeners();
 
     try {
-   
-
       // Tangani nilai NaN
-      plnUsage = plnUsage.isNaN ? 0 : plnUsage;
-      reUsage = reUsage.isNaN ? 0 : reUsage;
+      var plnUsage = await _usageService.getTotalPLNUsageLast7Days();
+      var reUsage = await _usageService.getTotalREusageLast7Days();
 
-      print(plnUsage);
-      print(reUsage);
       // Calculate and set the variables
       thisWeekUsage = (plnUsage * 1699).toInt();
       normalUsage = ((plnUsage + reUsage) * 1699).toInt();
